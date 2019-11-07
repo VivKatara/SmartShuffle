@@ -34,7 +34,7 @@ export default class InitialScreen extends PureComponent {
 		if(!await Spotify.isInitializedAsync()) {
 			// initialize spotify
 			const spotifyOptions = {
-				"clientID":"<INSERT-YOUR-CLIENT-ID-HERE>",
+				"clientID":"65403a286f143c4ba0afacc991dd700",
 				"sessionUserDefaultsKey":"SpotifySession",
 				"redirectURL":"examplespotifyapp://auth",
 				"scopes":["user-read-private", "playlist-read", "playlist-read-private", "streaming"],
