@@ -20,8 +20,17 @@ dotenv.config();
 app.get('/getPlaylists', function (req, res) {
   console.log("trying to get some songs"); 
   let request = "https://api.spotify.com/v1/tracks/11dFghVXANMlKmJXsNCbNl";
-
-  res.send(playlist_response);
+ 
+  let response = []; 
+  let tracks = playlist_response.items; 
+  for(let i = 0; i < tracks.length; i++){
+  	let trackData = {}
+  	trackData.id = tracks[i].id;
+  	trackData.name = tracks[i].name; 
+  	trackData.images = tracks[i].images; 
+  	response.push(trackData); 
+  }
+  res.send(response);
 
   //do auth stuff and forward request
 
