@@ -1,5 +1,4 @@
 
-const port = 3200
 // npm deps
 const express = require('express');
 const https = require('https');
@@ -7,15 +6,18 @@ const crypto = require('crypto');
 const { URL } = require('url');
 const QueryString = require('querystring');
 
+//Env vars
+const {spClientId, spClientSecret, spBaseUrl, port} = require('./config');
+
 // Require the framework and instantiate it
 const app = express();
 
-app.get('/', (req, res) => res.send('Soon-to-be spotify cool stuff'))
+app.get('/', (req, res) => {
+	res.send("Soon to be cool spotify-stuff");
+});
 
 
 // init spotify config
-const spClientId = process.env.SPOTIFY_CLIENT_ID;
-const spClientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 const spClientCallback = process.env.SPOTIFY_CLIENT_CALLBACK;
 const authString = Buffer.from(spClientId+':'+spClientSecret).toString('base64');
 const authHeader = `Basic ${authString}`;
@@ -191,5 +193,6 @@ app.post('/refresh', async (req, res) => {
 });
 
 // start server
-app.listen(process.env.PORT || 5000)
-//app.listen(port, () => console.log(`Dummy  app listening on port ${port}!`))
+app.listen(port, () => {
+	console.log(`Server is listening on port ${port}`);
+})
