@@ -6,12 +6,28 @@ const https = require('https');
 const crypto = require('crypto');
 const { URL } = require('url');
 const QueryString = require('querystring');
+const playlist_response = require('./sample_response.js')
 
 // Require the framework and instantiate it
 const app = express();
 
-app.get('/', (req, res) => res.send('Soon-to-be spotify cool stuff'))
+// get the env variables to do their thing 
+const dotenv = require('dotenv');
+dotenv.config();
 
+
+
+app.get('/getPlaylists', function (req, res) {
+  console.log("trying to get some songs"); 
+  let request = "https://api.spotify.com/v1/tracks/11dFghVXANMlKmJXsNCbNl";
+
+  res.send(playlist_response);
+
+  //do auth stuff and forward request
+
+
+
+})
 
 // init spotify config
 const spClientId = process.env.SPOTIFY_CLIENT_ID;
