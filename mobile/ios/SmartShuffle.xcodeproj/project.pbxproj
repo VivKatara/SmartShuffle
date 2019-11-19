@@ -12,11 +12,13 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		285161FC23839E67000577DD /* SpotifyAudioPlayback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 285161FA23839E67000577DD /* SpotifyAudioPlayback.framework */; };
+		285161FD23839E67000577DD /* SpotifyMetadata.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 285161FB23839E67000577DD /* SpotifyMetadata.framework */; };
+		2892135E23839F9800F9812E /* libPods-SmartShuffle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2892135D23839F9800F9812E /* libPods-SmartShuffle.a */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* SmartShuffleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* SmartShuffleTests.m */; };
-		7B9FE808ECD73EBD79BE35EF /* libPods-SmartShuffle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E00EB012C6E510DA1516068 /* libPods-SmartShuffle.a */; };
 		B01BA33BF5966DCD1FC379C1 /* libPods-SmartShuffle-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D4896051FD8342A33CCEA0A /* libPods-SmartShuffle-tvOS.a */; };
 		BEF732521AF4D278CC04E010 /* libPods-SmartShuffleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DCE773384F17491D8EB9B7DD /* libPods-SmartShuffleTests.a */; };
 		E734CEFA181607FEB1DA3CF1 /* libPods-SmartShuffle-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F4FC9BA692040D4A1A3B2DD2 /* libPods-SmartShuffle-tvOSTests.a */; };
@@ -52,6 +54,9 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = SmartShuffle/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SmartShuffle/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = SmartShuffle/main.m; sourceTree = "<group>"; };
+		285161FA23839E67000577DD /* SpotifyAudioPlayback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpotifyAudioPlayback.framework; path = "../node_modules/rn-spotify-sdk/ios/external/SpotifySDK/SpotifyAudioPlayback.framework"; sourceTree = "<group>"; };
+		285161FB23839E67000577DD /* SpotifyMetadata.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpotifyMetadata.framework; path = "../node_modules/rn-spotify-sdk/ios/external/SpotifySDK/SpotifyMetadata.framework"; sourceTree = "<group>"; };
+		2892135D23839F9800F9812E /* libPods-SmartShuffle.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-SmartShuffle.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E47B1E0B4A5D006451C7 /* SmartShuffle-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SmartShuffle-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* SmartShuffle-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SmartShuffle-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E00EB012C6E510DA1516068 /* libPods-SmartShuffle.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SmartShuffle.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -82,7 +87,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7B9FE808ECD73EBD79BE35EF /* libPods-SmartShuffle.a in Frameworks */,
+				2892135E23839F9800F9812E /* libPods-SmartShuffle.a in Frameworks */,
+				285161FC23839E67000577DD /* SpotifyAudioPlayback.framework in Frameworks */,
+				285161FD23839E67000577DD /* SpotifyMetadata.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,6 +146,9 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2892135D23839F9800F9812E /* libPods-SmartShuffle.a */,
+				285161FA23839E67000577DD /* SpotifyAudioPlayback.framework */,
+				285161FB23839E67000577DD /* SpotifyMetadata.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				3E00EB012C6E510DA1516068 /* libPods-SmartShuffle.a */,
@@ -194,7 +204,6 @@
 				452BD8B3934245000C8D4DBC /* Pods-SmartShuffleTests.debug.xcconfig */,
 				0584AF558783BA50B1E298AE /* Pods-SmartShuffleTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -308,6 +317,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
