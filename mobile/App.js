@@ -16,11 +16,27 @@ import {
 import InitialScreen from './src/InitialScreen.js';
 import PlayerScreen from './src/PlayerScreen.js';
 
+
+const MainApp = createSwitchNavigator({
+	initial: {
+		screen: InitialScreen,
+		path: 'initial'
+	},
+	player: {
+		screen: PlayerScreen,
+		path: 'player'
+	},
+});
+
 const App = createSwitchNavigator({
-	initial: { screen:InitialScreen },
-	player: { screen:PlayerScreen },
+	player: {
+		screen: MainApp,
+		path: ''
+	},
 });
 
 const AppContainer = createAppContainer(App);
 
-export default AppContainer;
+export default () => {
+	return <AppContainer uriPrefix='smartshuffleapp://' />;
+};

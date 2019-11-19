@@ -31,13 +31,13 @@ export default class InitialScreen extends PureComponent {
 
 	async initializeIfNeeded() {
 		// initialize Spotify if it hasn't been initialized yet
-		if(!await Spotify.isInitializedAsync()) {
+		if (!await Spotify.isInitializedAsync()) {
 			// initialize spotify
 			const spotifyOptions = {
-				"clientID":"65403a2862f143c4ba0afacc991dd700",
-				"sessionUserDefaultsKey":"SpotifySession",
-				"redirectURL":"examplespotifyapp://auth",
-				"scopes":["user-read-private", "playlist-read", "playlist-read-private", "streaming"],
+				"clientID": "65403a2862f143c4ba0afacc991dd700",
+				"sessionUserDefaultsKey": "SpotifySession",
+				"redirectURL": "smartshuffleapp://smartshuffle",
+				"scopes": ["user-read-private", "playlist-read", "playlist-read-private", "streaming"],
 			};
 			const loggedIn = await Spotify.initialize(spotifyOptions);
 			// update UI state
@@ -45,7 +45,7 @@ export default class InitialScreen extends PureComponent {
 				spotifyInitialized: true
 			});
 			// handle initialization
-			if(loggedIn) {
+			if (loggedIn) {
 				this.goToPlayer();
 			}
 		}
@@ -55,7 +55,7 @@ export default class InitialScreen extends PureComponent {
 				spotifyInitialized: true
 			});
 			// handle logged in
-			if(await Spotify.isLoggedInAsync()) {
+			if (await Spotify.isLoggedInAsync()) {
 				this.goToPlayer();
 			}
 		}
@@ -70,7 +70,7 @@ export default class InitialScreen extends PureComponent {
 	spotifyLoginButtonWasPressed() {
 		// log into Spotify
 		Spotify.login().then((loggedIn) => {
-			if(loggedIn) {
+			if (loggedIn) {
 				// logged in
 				this.goToPlayer();
 			}
@@ -84,7 +84,7 @@ export default class InitialScreen extends PureComponent {
 	}
 
 	render() {
-		if(!this.state.spotifyInitialized) {
+		if (!this.state.spotifyInitialized) {
 			return (
 				<View style={styles.container}>
 					<ActivityIndicator animating={true} style={styles.loadIndicator}>
