@@ -2,6 +2,7 @@
 // npm deps
 const express = require('express');
 const https = require('https');
+const fetch = require('node-fetch'); 
 const crypto = require('crypto');
 const { URL } = require('url');
 const QueryString = require('querystring');
@@ -24,20 +25,40 @@ app.get('/', (req, res) => {
 
 
 app.get('/getPlaylists', function (req, res) {
-  console.log("trying to get some songs"); 
-  let request = "https://api.spotify.com/v1/tracks/11dFghVXANMlKmJXsNCbNl";
- 
-  let response = []; 
-  let tracks = playlist_response.items; 
-  for(let i = 0; i < tracks.length; i++){
-  	let trackData = {}
-  	trackData.id = tracks[i].id;
-  	trackData.name = tracks[i].name; 
-  	trackData.images = tracks[i].images; 
-  	response.push(trackData); 
-  }
-  res.send(response);
 
+  //console.log("trying to get some songs", req.params); 
+  let request = "https://api.spotify.com/v1/me/playlists";
+  let headers = 
+  {
+    	'Authorization' : 'Bearer BQD1TQdBsMwa1m28l7jaPzHxvroimtHaIkeaqc-iospnAUt9XNXm5h7Sfk7UzFNXsefZvDGp15zNHuN_SQMx3J38ZizDlg8vrwtUPKgnuzaFo6lMBM4BFwAe0GCLnKl1FyE3WigQS51Qlx85affFdctcTV8mnE7ZvBYmUThsIqt_HTsFhHAvzwArMNfdVgN54SbuZrXeKw',
+      'Content-Type': 'application/json',
+      'Content-Length': '0'
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+}
+
+
+   fetch(request, { 'headers': headers})
+	   .then(res => res.json())
+	   .then(data => {
+	      let response = []; 
+	      //console.log("DATA: ", data); 
+		  let tracks = data.items; 
+		  for(let i = 0; i < tracks.length; i++){
+		  	let trackData = {}
+		  	trackData.id = tracks[i].id;
+		  	trackData.name = tracks[i].name; 
+		  	trackData.images = tracks[i].images; 
+		  	response.push(trackData); 
+  		}
+  		res.send(response);
+
+	      console.log(data); 
+	   })
+	   .catch(err => {
+	      res.send(err);
+   });
+ 
+  
   //do auth stuff and forward request
 
 
@@ -220,6 +241,6 @@ app.post('/refresh', async (req, res) => {
 });
 
 // start server
-app.listen(port, () => {
+app.listen(port || 3200, () => {
 	console.log(`Server is listening on port ${port}`);
 })
