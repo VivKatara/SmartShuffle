@@ -18,5 +18,8 @@
   "repository": "https://github.com/VivKatara/SmartShuffle",
   "author": "leaspark <lea.sparkman@yale.edu>",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "nodemon": "^2.0.0"
+  }
 }
