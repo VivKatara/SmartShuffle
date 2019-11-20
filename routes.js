@@ -26,11 +26,11 @@ app.get('/', (req, res) => {
 
 app.get('/getPlaylists', function (req, res) {
 
-  //console.log("trying to get some songs", req.params); 
+  console.log("trying to get some songs", req.query.token); 
   let request = "https://api.spotify.com/v1/me/playlists";
   let headers = 
   {
-    	'Authorization' : 'Bearer BQD1TQdBsMwa1m28l7jaPzHxvroimtHaIkeaqc-iospnAUt9XNXm5h7Sfk7UzFNXsefZvDGp15zNHuN_SQMx3J38ZizDlg8vrwtUPKgnuzaFo6lMBM4BFwAe0GCLnKl1FyE3WigQS51Qlx85affFdctcTV8mnE7ZvBYmUThsIqt_HTsFhHAvzwArMNfdVgN54SbuZrXeKw',
+    	'Authorization' : 'Bearer ' + req.query.token,
       'Content-Type': 'application/json',
       'Content-Length': '0'
       // 'Content-Type': 'application/x-www-form-urlencoded',
