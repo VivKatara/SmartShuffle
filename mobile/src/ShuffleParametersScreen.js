@@ -1,12 +1,11 @@
-import React, {Component} from 'react';
-import { Alert, Platform, StyleSheet, Text, View, SafeAreaView, Picker, TouchableOpacity} from 'react-native';
+import React, { Component } from 'react';
+import { Alert, Platform, StyleSheet, Text, View, SafeAreaView, Picker, TouchableOpacity } from 'react-native';
 import { Dropdown } from 'react-native-material-dropdown';
 import { NavigationEvents } from 'react-navigation';
 
-type Props = {};
 
 
-export default class ShuffleParametersScreen extends Component<Props> {
+export default class ShuffleParametersScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,24 +17,24 @@ export default class ShuffleParametersScreen extends Component<Props> {
 
 
   submitForm = () => {
-      this.props.navigation.navigate('shuffleParameters', {playlistObject: this.state.playlistObject});
+    this.props.navigation.navigate('shuffleParameters', { playlistObject: this.state.playlistObject });
   }
 
 
-  componentWillMount () {
-      let items = this.state.playlists;
-      let pickerItems = items.map((a, i) => {
-        return {value: items[i].name}
-      })
-      this.setState({
-        pickerItems: pickerItems,
-      })
+  componentDidMount() {
+    let items = this.state.playlists;
+    let pickerItems = items.map((a, i) => {
+      return { value: items[i].name }
+    })
+    this.setState({
+      pickerItems: pickerItems,
+    })
   }
 
 
   categoryValueChange = itemValue => {
     if (itemValue !== "") {
-      this.setState({category: itemValue});
+      this.setState({ category: itemValue });
     }
   }
 
@@ -45,17 +44,17 @@ export default class ShuffleParametersScreen extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
-        <View style={{flex: 50, alignSelf:"stretch", justifyContent:"flex-end"}}>
+        <View style={{ flex: 50, alignSelf: "stretch", justifyContent: "flex-end" }}>
           <Text style={styles.maintenanceForm}>Select Playlist</Text>
         </View>
-        <View style={{paddingLeft: 6, flex: 162, alignSelf:"stretch", justifyContent:"space-around"}}>
-          <Dropdown label='Playlist' onChangeText={(itemValue, itemIndex) => this.categoryValueChange(itemValue)} data={this.state.pickerItems}/>
+        <View style={{ paddingLeft: 6, flex: 162, alignSelf: "stretch", justifyContent: "space-around" }}>
+          <Dropdown label='Playlist' onChangeText={(itemValue, itemIndex) => this.categoryValueChange(itemValue)} data={this.state.pickerItems} />
         </View>
-        <View style={{flex: 210, alignSelf:"stretch", justifyContent:"flex-start"}}></View>
-        <View style={{flex: 150, alignSelf:"stretch", justifyContent:"center", alignItems: "center"}}>
-          <TouchableOpacity style={styles.submitButton} disabled={!(this.state.category !== "")} onPress={ this.submitForm }>
-            <View style={{flex: 1, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
-              <Text style = {styles.buttontext}>SUBMIT</Text>
+        <View style={{ flex: 210, alignSelf: "stretch", justifyContent: "flex-start" }}></View>
+        <View style={{ flex: 150, alignSelf: "stretch", justifyContent: "center", alignItems: "center" }}>
+          <TouchableOpacity style={styles.submitButton} disabled={!(this.state.category !== "")} onPress={this.submitForm}>
+            <View style={{ flex: 1, alignSelf: "stretch", justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={styles.buttontext}>SUBMIT</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -73,14 +72,14 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 24
   },
-  button:{
+  button: {
     alignItems: 'center',
     height: 100,
     width: 200,
   },
   buttontext: {
     // fontFamily: "OpenSans",
-    width:"100%",
+    width: "100%",
     fontSize: 14,
     fontWeight: "bold",
     fontStyle: "normal",

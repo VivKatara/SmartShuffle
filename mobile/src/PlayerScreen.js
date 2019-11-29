@@ -53,15 +53,15 @@ export default class PlayerScreen extends PureComponent {
 	render() {
 		return (
 			<View style={styles.container}>
-				{ this.state.spotifyUserName!=null ? (
+				{this.state.spotifyUserName != null ? (
 					<Text style={styles.greeting}>
 						You are logged in as {this.state.spotifyUserName}
 					</Text>
 				) : (
-					<Text style={styles.greeting}>
-						Getting user info...
+						<Text style={styles.greeting}>
+							Getting user info...
 					</Text>
-				)}
+					)}
 				<TouchableHighlight onPress={this.spotifyLogoutButtonWasPressed}>
 					<Text>Logout</Text>
 				</TouchableHighlight>

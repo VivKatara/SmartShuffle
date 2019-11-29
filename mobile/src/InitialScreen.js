@@ -30,16 +30,16 @@ export default class InitialScreen extends PureComponent {
 		global.accessToken = await Spotify.getSession().accessToken;
 		console.log(global.accessToken);
 		await this.getPlaylists();
-		this.props.navigation.navigate('playlists', {playlists: this.state.playlists});
+		this.props.navigation.navigate('playlists', { playlists: this.state.playlists });
 	}
 
 	async getPlaylists() {
-      const resp = await fetch('https://frightful-barrow-37052.herokuapp.com/getPlaylists');
-	  const playlists = await resp.json();
-	  this.setState({
-		  playlists: playlists
-	  });
-  }
+		const resp = await fetch('https://frightful-barrow-37052.herokuapp.com/getPlaylists?token=' + global.accessToken);
+		const playlists = await resp.json();
+		this.setState({
+			playlists: playlists
+		});
+	}
 
 	async initializeIfNeeded() {
 		// initialize Spotify if it hasn't been initialized yet
