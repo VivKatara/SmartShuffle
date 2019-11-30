@@ -10,7 +10,8 @@ export default class ShuffleParametersScreen extends Component {
     super(props);
     this.state = {
       category: "",
-      playlistObject: this.props.navigation.getParam("playlistObject", {}),
+      // playlistObject is of form {'id': xxx, 'name': xxx}
+      playlistObject: this.props.navigation.getParam("playlist", {}),
       pickerItems: [],
     }
   }
@@ -22,6 +23,7 @@ export default class ShuffleParametersScreen extends Component {
 
 
   componentDidMount() {
+    console.log(this.state.playlistObject);
     let items = this.state.playlists;
     let pickerItems = items.map((a, i) => {
       return { value: items[i].name }

@@ -35,6 +35,7 @@ export default class InitialScreen extends PureComponent {
 
 	async getPlaylists() {
 		const resp = await fetch('https://frightful-barrow-37052.herokuapp.com/getPlaylists?token=' + global.accessToken);
+		// playlists is an array of playlist objects
 		const playlists = await resp.json();
 		this.setState({
 			playlists: playlists

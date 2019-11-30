@@ -11,34 +11,36 @@ export default class PlaylistsScreen extends Component {
       playlistName: "",
       playlistObject: {},
       playlists: this.props.navigation.getParam("playlists", []),
+      playlistIdDictionary: {},
       pickerItems: [],
     }
   }
 
   componentDidMount() {
     let items = this.state.playlists;
+    //console.log(items);
     let array = [];
+    let dict = {};
     this.state.playlists.forEach(pl => {
       let name = pl.name;
-      let picker = { value: pl.name, data: pl.id };
+      let picker = { value: pl.name };
       array.push(picker);
+      dict[name] = pl.id;
     });
     this.setState({ pickerItems: array });
+    this.setState({ playlistIdDictionary: dict });
     console.log(array);
   }
 
 
   selectPlaylist = () => {
     // Get playlist ID given name and pass both to next screen as an object
-    this.state.playlists.forEach(playlist => {
-      if (playlist.name == this.state.playlistName) {
-        let object = { "id": playlist.id, "name": this.state.playlistName }
-        this.setState({
-          playlistObject: playlistObject,
-        })
-      }
-    });
-    this.props.navigation.navigate('shuffleParameters', { playlist: this.state.playlistObject });
+    let object = { "id": this.state.playlistIdDictionary[this.state.playlistName], "name": this.state.playlistName }
+    this.setState({
+      playlistObject: object,
+    })
+    console.log(object);
+    this.props.navigation.navigate('shuffleParameters', { playlist: object });
   }
 
 
