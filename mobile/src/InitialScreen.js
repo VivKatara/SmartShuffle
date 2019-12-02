@@ -26,6 +26,12 @@ export default class InitialScreen extends PureComponent {
 		this.spotifyLoginButtonWasPressed = this.spotifyLoginButtonWasPressed.bind(this);
 	}
 
+	componentDidMount() {
+		this.initializeIfNeeded().catch((error) => {
+			Alert.alert("Error", error.message);
+		});
+	}
+
 	async goToPlayer() {
 		global.accessToken = await Spotify.getSession().accessToken;
 		console.log(global.accessToken);
@@ -34,8 +40,9 @@ export default class InitialScreen extends PureComponent {
 	}
 
 	async getPlaylists() {
-      const resp = await fetch('https://frightful-barrow-37052.herokuapp.com/getPlaylists');
-	  const playlists = await resp.json();
+      // const resp = await fetch('http://localhost:3000/getPlaylists');
+	  // const playlists = await resp.json();
+	  let playlists = [{"name": "Throwbacks", "id": 15}, {"name": "Pregame", "id": 16}, {"name": "Sad asf", "id": 17}, {"name": "Wavy", "id": 18}, {"name": "Late Night", "id": 19}, {"name": "Jamz", "id": 20}, {"name": "Good Vibes", "id": 21}, {"name": "Lo-Fi Beats", "id": 22}, {"name": "Party", "id": 23}, {"name": "Party 2", "id": 24}, {"name": "Chillary Clinton", "id": 25}]
 	  this.setState({
 		  playlists: playlists
 	  });
@@ -71,12 +78,6 @@ export default class InitialScreen extends PureComponent {
 				this.goToPlayer();
 			}
 		}
-	}
-
-	componentDidMount() {
-		this.initializeIfNeeded().catch((error) => {
-			Alert.alert("Error", error.message);
-		});
 	}
 
 	spotifyLoginButtonWasPressed() {

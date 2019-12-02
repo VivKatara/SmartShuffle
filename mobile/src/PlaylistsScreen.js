@@ -9,7 +9,6 @@ export default class PlaylistsScreen extends Component<Props> {
     super(props);
     this.state = {
       playlistName: "",
-      playlistObject: {},
       playlists: this.props.navigation.getParam("playlists", []),
       pickerItems: [],
     }
@@ -17,6 +16,7 @@ export default class PlaylistsScreen extends Component<Props> {
 
   componentWillMount () {
       let items = this.state.playlists;
+      console.log(items);
       let pickerItems = items.map((a, i) => {
         return {value: items[i].name}
       })
@@ -31,12 +31,9 @@ export default class PlaylistsScreen extends Component<Props> {
       this.state.playlists.forEach(playlist => {
           if (playlist.name == this.state.playlistName) {
               let object = {"id":playlist.id, "name":this.state.playlistName}
-              this.setState({
-                playlistObject: playlistObject,
-              })
+              this.props.navigation.navigate('shuffleParameters', {playlistObject: object});
           }
       });
-      this.props.navigation.navigate('shuffleParameters', {playlist: this.state.playlistObject});
   }
 
 
@@ -102,16 +99,15 @@ const styles = StyleSheet.create({
     width: 254,
     height: 55,
     borderRadius: 27.5,
-    backgroundColor: "#df5434"
+    backgroundColor: "#1DB954"
   },
   maintenanceForm: {
-    height: 22,
     // fontFamily: "OpenSans",
-    fontSize: 16,
+    fontSize: 22,
     fontWeight: "normal",
     fontStyle: "normal",
     letterSpacing: 0,
-    color: "#df5434"
+    color: "#1DB954"
   },
   categoryTitle: {
     height: 19,

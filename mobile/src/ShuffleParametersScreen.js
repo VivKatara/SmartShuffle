@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import { Alert, Platform, StyleSheet, Text, View, SafeAreaView, Picker, TouchableOpacity} from 'react-native';
 import { Dropdown } from 'react-native-material-dropdown';
 import { NavigationEvents } from 'react-navigation';
+import { ActivityIndicator } from 'react-native-paper';
+import { Slider } from 'react-native-elements';
 
 type Props = {};
 
@@ -10,52 +12,88 @@ export default class ShuffleParametersScreen extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = {
-      category: "",
       playlistObject: this.props.navigation.getParam("playlistObject", {}),
+      v1: 0.5,
+      v2: 0.5,
+      v3: 0.5,
+      v4: 0.5,
       pickerItems: [],
+      genreName: "",
+      showSpinner: false,
     }
   }
 
-
-  submitForm = () => {
-      this.props.navigation.navigate('shuffleParameters', {playlistObject: this.state.playlistObject});
-  }
-
-
   componentWillMount () {
-      let items = this.state.playlists;
+      let items = ["Indie/Alternative", "Electro-Pop", "Rap", "Hip Hop", "Deep Haus", "R&B", "Soul", "Rock"];
       let pickerItems = items.map((a, i) => {
-        return {value: items[i].name}
+        return {value: items[i]}
       })
+      console.log(pickerItems)
       this.setState({
         pickerItems: pickerItems,
       })
+      console.log(this.state.playlistObject)
   }
 
 
   categoryValueChange = itemValue => {
     if (itemValue !== "") {
-      this.setState({category: itemValue});
+      this.setState({genreName: itemValue});
     }
   }
-
 
 
 
   render() {
     return (
       <View style={styles.container}>
-        <View style={{flex: 50, alignSelf:"stretch", justifyContent:"flex-end"}}>
-          <Text style={styles.maintenanceForm}>Select Playlist</Text>
+        <View style={{flex: 50, alignSelf:"stretch", justifyContent:"center"}}>
+          <Text style={styles.maintenanceForm}>Shuffle Parameters:  {this.state.playlistObject.name}</Text>
         </View>
-        <View style={{paddingLeft: 6, flex: 162, alignSelf:"stretch", justifyContent:"space-around"}}>
-          <Dropdown label='Playlist' onChangeText={(itemValue, itemIndex) => this.categoryValueChange(itemValue)} data={this.state.pickerItems}/>
+        <View style={{paddingLeft: 6, flex: 180, alignSelf:"stretch", justifyContent:"space-around"}}>
+            <Text>BPM: {this.state.v1}</Text>
+            <Slider
+                thumbTintColor= "#1DB954"
+                value={Math.round( this.state.v1 * 100 ) / 100}
+                onValueChange={v1 => this.setState({ v1: Math.round( v1 * 100 ) / 100 })}
+            />
+            <Text>Happiness/Mood: {this.state.v2}</Text>
+            <Slider
+                thumbTintColor= "#1DB954"
+                value={Math.round( this.state.v2 * 100 ) / 100}
+                onValueChange={v2 => this.setState({ v2: Math.round( v2 * 100 ) / 100 })}
+            />
+
+            <ActivityIndicator style={{paddingBottom:30, flex: 1, justifyContent: 'center'  }} size={76} color="#1DB954" animating={this.state.showSpinner}/>
+            <Text>Danceability: {this.state.v3}</Text>
+            <Slider
+                thumbTintColor= "#1DB954"
+                value={Math.round( this.state.v3 * 100 ) / 100}
+                onValueChange={v3 => this.setState({ v3: Math.round( v3 * 100 ) / 100 })}
+            />
+            <Text>Instrumentation: {this.state.v4}</Text>
+            <Slider
+                thumbTintColor= "#1DB954"
+                value={Math.round( this.state.v4 * 100 ) / 100}
+                onValueChange={v4 => this.setState({ v4: Math.round( v4 * 100 ) / 100 })}
+            />
+            <Dropdown label='Genre' onChangeText={(itemValue, itemIndex) => this.categoryValueChange(itemValue)} data={this.state.pickerItems}/>
+            <View style={{paddingLeft: 6, height:30, alignSelf:"stretch", justifyContent:"space-around"}}></View>
         </View>
-        <View style={{flex: 210, alignSelf:"stretch", justifyContent:"flex-start"}}></View>
-        <View style={{flex: 150, alignSelf:"stretch", justifyContent:"center", alignItems: "center"}}>
-          <TouchableOpacity style={styles.submitButton} disabled={!(this.state.category !== "")} onPress={ this.submitForm }>
+        <View style={{flex: 70, alignSelf:"stretch", justifyContent:"center", alignItems: "center"}}>
+          <TouchableOpacity style={styles.submitButton} disabled={!(this.state.genreName !== "")} onPress={() => {
+              this.setState({
+                showSpinner: true,
+            });
+            let ok = setTimeout(() => {
+                this.setState({
+                  showSpinner: false,
+              });
+              this.props.navigation.navigate("player");
+            }, 5000);
+            }}>
             <View style={{flex: 1, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
-              <Text style = {styles.buttontext}>SUBMIT</Text>
+              <Text style = {styles.buttontext}>SHUFFLE</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -92,16 +130,15 @@ const styles = StyleSheet.create({
     width: 254,
     height: 55,
     borderRadius: 27.5,
-    backgroundColor: "#df5434"
+    backgroundColor: "#1DB954"
   },
   maintenanceForm: {
-    height: 22,
     // fontFamily: "OpenSans",
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "normal",
     fontStyle: "normal",
     letterSpacing: 0,
-    color: "#df5434"
+    color: "#1DB954"
   },
   categoryTitle: {
     height: 19,

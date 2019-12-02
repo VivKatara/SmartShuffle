@@ -55,7 +55,7 @@ export default class PlayerScreen extends PureComponent {
 			<View style={styles.container}>
 				{ this.state.spotifyUserName!=null ? (
 					<Text style={styles.greeting}>
-						You are logged in as {this.state.spotifyUserName}
+						Playing song "Dancing in the moonlight"!
 					</Text>
 				) : (
 					<Text style={styles.greeting}>
