@@ -36,17 +36,18 @@ export default class InitialScreen extends PureComponent {
 		global.accessToken = await Spotify.getSession().accessToken;
 		console.log(global.accessToken);
 		await this.getPlaylists();
-		this.props.navigation.navigate('playlists', {playlists: this.state.playlists});
+		this.props.navigation.navigate('playlists', { playlists: this.state.playlists });
 	}
 
 	async getPlaylists() {
-      // const resp = await fetch('http://localhost:3000/getPlaylists');
-	  // const playlists = await resp.json();
-	  let playlists = [{"name": "Throwbacks", "id": 15}, {"name": "Pregame", "id": 16}, {"name": "Sad asf", "id": 17}, {"name": "Wavy", "id": 18}, {"name": "Late Night", "id": 19}, {"name": "Jamz", "id": 20}, {"name": "Good Vibes", "id": 21}, {"name": "Lo-Fi Beats", "id": 22}, {"name": "Party", "id": 23}, {"name": "Party 2", "id": 24}, {"name": "Chillary Clinton", "id": 25}]
-	  this.setState({
-		  playlists: playlists
-	  });
-  }
+		const resp = await fetch('https://frightful-barrow-37052.herokuapp.com/getPlaylists?token=' + global.accessToken);
+		// playlists is an array of playlist objects
+		const playlists = await resp.json();
+		console.log(playlists);
+		this.setState({
+			playlists: playlists
+		});
+	}
 
 	async initializeIfNeeded() {
 		// initialize Spotify if it hasn't been initialized yet

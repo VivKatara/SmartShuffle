@@ -1,18 +1,17 @@
-import React, {Component} from 'react';
-import { Alert, Platform, StyleSheet, Text, View, SafeAreaView, Picker, TouchableOpacity} from 'react-native';
+import React, { Component } from 'react';
+import { Alert, Platform, StyleSheet, Text, View, SafeAreaView, Picker, TouchableOpacity } from 'react-native';
 import { Dropdown } from 'react-native-material-dropdown';
 import { NavigationEvents } from 'react-navigation';
 import { ActivityIndicator } from 'react-native-paper';
 import { Slider } from 'react-native-elements';
 
-type Props = {};
 
 
-export default class ShuffleParametersScreen extends Component<Props> {
+export default class ShuffleParametersScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      playlistObject: this.props.navigation.getParam("playlistObject", {}),
+      playlistObject: this.props.navigation.getParam("playlist", {}),
       v1: 0.5,
       v2: 0.5,
       v3: 0.5,
@@ -38,7 +37,7 @@ export default class ShuffleParametersScreen extends Component<Props> {
 
   categoryValueChange = itemValue => {
     if (itemValue !== "") {
-      this.setState({genreName: itemValue});
+      this.setState({ genreName: itemValue });
     }
   }
 
@@ -111,14 +110,14 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 24
   },
-  button:{
+  button: {
     alignItems: 'center',
     height: 100,
     width: 200,
   },
   buttontext: {
     // fontFamily: "OpenSans",
-    width:"100%",
+    width: "100%",
     fontSize: 14,
     fontWeight: "bold",
     fontStyle: "normal",
