@@ -4,5 +4,6 @@ module.exports = {
     spClientId: process.env.SPOTIFY_CLIENT_ID,
     spClientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     spBaseUrl: process.env.SPOTIFY_BASE_URL,
-    port: process.env.PORT
+    port: process.env.PORT,
+    authToken: process.env.SPOTIFY_AUTH_TOKEN
 }

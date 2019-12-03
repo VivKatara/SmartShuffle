@@ -9,7 +9,7 @@
     "url": "^0.11.0"
   },
   "scripts": {
-    "start": "node routes.js"
+    "start": "nodemon routes.js"
   },
   "name": "backend",
   "version": "1.0.0",
