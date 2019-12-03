@@ -11,6 +11,7 @@ import {
 import Spotify from 'rn-spotify-sdk';
 
 
+
 export default class InitialScreen extends PureComponent {
 	static navigationOptions = {
 		header: null
@@ -24,6 +25,7 @@ export default class InitialScreen extends PureComponent {
 			playlists: []
 		};
 		this.spotifyLoginButtonWasPressed = this.spotifyLoginButtonWasPressed.bind(this);
+
 	}
 
 	componentDidMount() {
@@ -32,7 +34,7 @@ export default class InitialScreen extends PureComponent {
 		});
 	}
 
-	async goToPlayer() {
+	goToPlayer = async () => {
 		global.accessToken = await Spotify.getSession().accessToken;
 		console.log(global.accessToken);
 		await this.getPlaylists();
@@ -112,12 +114,19 @@ export default class InitialScreen extends PureComponent {
 		else {
 			return (
 				<View style={styles.container}>
-					<Text style={styles.greeting}>
-						Hey! You! Log into your spotify
-					</Text>
-					<TouchableHighlight onPress={this.spotifyLoginButtonWasPressed} style={styles.spotifyLoginButton}>
-						<Text style={styles.spotifyLoginButtonText}>Log into Spotify</Text>
-					</TouchableHighlight>
+					<View style={{ flex: 100, alignItems: 'center', alignSelf: "stretch", justifyContent: "flex-end" }}>
+		          		<Text style={styles.maintenanceForm}>SmartShuffle</Text>
+		        	</View>
+					<View style={{ flex: 120, alignItems: 'center', alignSelf: "stretch", justifyContent: "flex-end" }}>
+					</View>
+					<View style={{ flex: 300, alignItems: 'center', alignSelf: "stretch", justifyContent: "flex-start" }}>
+						<Text style={styles.greeting}>
+							Hey! You! Log into your spotify
+						</Text>
+						<TouchableHighlight onPress={this.spotifyLoginButtonWasPressed} style={styles.spotifyLoginButton}>
+							<Text style={styles.spotifyLoginButtonText}>Log into Spotify</Text>
+						</TouchableHighlight>
+					</View>
 				</View>
 			);
 		}
@@ -131,7 +140,17 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: '#F5FCFF',
+		paddingLeft: 20,
+        paddingRight: 24
 	},
+	maintenanceForm: {
+      // fontFamily: "OpenSans",
+      fontSize: 35,
+      fontWeight: "normal",
+      fontStyle: "normal",
+      letterSpacing: 0,
+      color: "#1DB954"
+    },
 
 	loadIndicator: {
 		//
