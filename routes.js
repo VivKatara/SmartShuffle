@@ -75,13 +75,15 @@ app.get('/smartshuffle', async (req, res) => {
 	let acousticWeight = req.query.acousticness || 0
 	let weights = [tempoWeight, danceWeight, energyWeight, instrumentWeight, livenessWeight, loudnessWeight, speechWeight, valenceWeight, acousticWeight]
 
+
 	// const playlistId = req.query.playlistId
 	const playlistId = '4KK6ZMTlEeJ3B5A68YfU7V';
 	let request = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
 
 	let headers = 
   	{
-    	'Authorization' : 'Bearer ' + req.query.token,
+		// 'Authorization' : 'Bearer ' + req.query.token,
+		'Authorization': authToken,
       	'Content-Type': 'application/json',
       	'Content-Length': '0'
 	}
@@ -92,6 +94,8 @@ app.get('/smartshuffle', async (req, res) => {
 		trackIds = getTrackIdsFromPlaylist(items);
 		trackIdsWithVars = await appendAudioFeatures(trackIds, sortingParams, headers);
 		trackIdsWithWeights = calculateTotalScore(trackIdsWithVars, weights)
+		trackScoreObject = createTrackScoreObject(trackIdsWithWeights)
+		console.log(trackScoreObject)
 		let sorted_tracks = sort(trackIdsWithWeights, 1);
 		res.send(JSON.stringify(sorted_tracks));
 	}).catch((err) => {
@@ -160,6 +164,18 @@ async function appendAudioFeatures(trackIds, sortingParams, headers) {
 		})
 	}
 	return trackIdsWithVars
+}
+
+function createTrackScoreObject(trackIdsWithWeights) {
+	trackScoreObject = {}
+	let track = 0
+	let score = 0
+	for (tuple in trackIdsWithWeights) {
+		track = trackIdsWithWeights[tuple][0]
+		score = trackIdsWithWeights[tuple][1]
+		trackScoreObject[track] = score
+	}
+	return trackScoreObject
 }
 
 
