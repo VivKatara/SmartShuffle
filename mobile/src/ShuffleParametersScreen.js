@@ -41,8 +41,17 @@ export default class ShuffleParametersScreen extends Component {
     }
   }
 
-  getSortedPlaylist = () => {
-    console.log("a submission is happening");
+  async getSortedPlaylist = () => {
+    let request = "https://localhost:3000/smartshuffle?"
+      +"tempo=" + this.state.tempo
+      + "&danceability=" + this.state.danceability
+      + "&instrumentalness=" this.state.instrumentalness
+      + "&energy=" + this.state.energy; 
+
+      const response = await fetch(request); 
+      console.log(response); 
+
+
   }
 
 

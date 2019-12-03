@@ -81,7 +81,7 @@ app.get('/smartshuffle', async (req, res) => {
 
 	let headers = 
   	{
-    	'Authorization' : authToken,
+    	'Authorization' : 'Bearer ' + req.query.token,
       	'Content-Type': 'application/json',
       	'Content-Length': '0'
 	}
@@ -90,7 +90,7 @@ app.get('/smartshuffle', async (req, res) => {
 	.then(async (data) => {
 		let items = data["items"];
 		trackIds = getTrackIdsFromPlaylist(items);
-		trackIdsWithVars = await appendAudioFeatures(trackIds, sortingParams);
+		trackIdsWithVars = await appendAudioFeatures(trackIds, sortingParams, headers);
 		trackIdsWithWeights = calculateTotalScore(trackIdsWithVars, weights)
 		let sorted_tracks = sort(trackIdsWithWeights, 1);
 		res.send(JSON.stringify(sorted_tracks));
@@ -135,12 +135,7 @@ function calculateTotalScore(trackIdsWithVars, weights) {
 	return trackIdsWithWeights
 }
 
-async function appendAudioFeatures(trackIds, sortingParams) {
-	let headers = {
-		'Authorization': authToken,
-		'Content-Type': 'application/json',
-		'Content-Length': 0
-	}
+async function appendAudioFeatures(trackIds, sortingParams, headers) {
 	let trackIdsWithVars = []
 	// let trackIdsWithVars = {}
 	for (track in trackIds) {
