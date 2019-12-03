@@ -87,8 +87,7 @@ app.get('/smartshuffle', async (req, res) => {
 		trackIdsWithVars = await appendAudioFeatures(trackIds, sortingParams);
 		console.log(trackIdsWithVars)
 		let sorted_tracks = sort(trackIdsWithVars, 1);
-		console.log(sorted_tracks)
-		// res.send(JSON.stringify(sorted_tracks));
+		res.send(JSON.stringify(sorted_tracks));
 	}).catch((err) => {
 		console.log(err);
 	})
@@ -126,7 +125,6 @@ async function appendAudioFeatures(trackIds, sortingParams) {
 				parametersArray.push(data[sortingParams[parameter]])
 				// trackIdsWithVars[trackIds[track]].push(data[sortingParams[parameter]])
 			}
-			// trackIdsWithVars.push([0, 1])
 			trackIdsWithVars.push([trackIds[track], parametersArray])
 		}).catch((err) => {
 			console.log(err)
