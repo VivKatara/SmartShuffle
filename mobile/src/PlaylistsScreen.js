@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Alert, Platform, StyleSheet, Text, View, SafeAreaView, Picker, TouchableOpacity } from 'react-native';
+import { Alert, Platform, StyleSheet, Text, View, SafeAreaView, Picker, TouchableOpacity, TouchableHighlight } from 'react-native';
 import { Dropdown } from 'react-native-material-dropdown';
-import { NavigationEvents } from 'react-navigation';
-
+import { NavigationEvents, StackActions } from 'react-navigation';
+import Spotify from 'rn-spotify-sdk';
 
 export default class PlaylistsScreen extends Component {
   constructor(props) {
@@ -13,6 +13,7 @@ export default class PlaylistsScreen extends Component {
       playlistIdDictionary: {},
       pickerItems: [],
     }
+    this.spotifyLogoutButtonWasPressed = this.spotifyLogoutButtonWasPressed.bind(this);
   }
 
   componentDidMount() {
@@ -53,7 +54,15 @@ export default class PlaylistsScreen extends Component {
     }
   }
 
+  spotifyLogoutButtonWasPressed() {
+      Spotify.logout().finally(() => {
+          this.goToInitialScreen();
+      });
+  }
 
+  goToInitialScreen() {
+      this.props.navigation.navigate('initial');
+  }
 
 
   render() {
@@ -67,11 +76,20 @@ export default class PlaylistsScreen extends Component {
         </View>
         <View style={{ flex: 210, alignSelf: "stretch", justifyContent: "flex-start" }}></View>
         <View style={{ flex: 150, alignSelf: "stretch", justifyContent: "center", alignItems: "center" }}>
-          <TouchableOpacity style={styles.submitButton} disabled={!(this.state.playlistName !== "")} onPress={this.selectPlaylist}>
-            <View style={{ flex: 1, alignSelf: "stretch", justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={styles.buttontext}>SUBMIT</Text>
+            <View style={{flex: 50, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
+                <TouchableOpacity style={styles.submitButton} disabled={!(this.state.playlistName !== "")} onPress={this.selectPlaylist}>
+                    <View style={{ flex: 1, alignSelf: "stretch", justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={styles.buttontext}>SUBMIT</Text>
+                    </View>
+                </TouchableOpacity>
             </View>
-          </TouchableOpacity>
+            <View style={{flex: 1, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
+            </View>
+            <View style={{flex: 50, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
+                <TouchableHighlight onPress={this.spotifyLogoutButtonWasPressed}>
+                    <Text>Logout</Text>
+                </TouchableHighlight>
+            </View>
         </View>
       </View>
     );
