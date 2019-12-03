@@ -7,10 +7,9 @@ const { URL } = require('url');
 const QueryString = require('querystring');
 const playlist_response = require('./sample_response.js')
 
-const {spClientId, spClientSecret, spBaseUrl, port, authToken} = require('./config');
+const {spBaseUrl, port, sortParams, authToken} = require('./config');
 
-//Env vars
-//const {spClientId, spClientSecret, spBaseUrl, port} = require('./config');
+const sortingParams = sortParams.split(' ')
 
 // Require the framework and instantiate it
 const app = express();
@@ -23,7 +22,6 @@ app.get('/', (req, res) => {
 	res.send("Soon to be cool spotify-stuff");
 });
 
-
 app.get('/getPlaylists', async (req, res) => {
   console.log("trying to get some songs", req.query.token); 
   let request = "https://api.spotify.com/v1/me/playlists";
@@ -32,7 +30,6 @@ app.get('/getPlaylists', async (req, res) => {
 		'Authorization' : 'Bearer ' + req.query.token,
 		'Content-Type': 'application/json',
       'Content-Length': '0'
-      // 'Content-Type': 'application/x-www-form-urlencoded',
 }
 
    await fetch(request, { 'headers': headers})
@@ -67,7 +64,6 @@ app.get('/smartshuffle', async (req, res) => {
 	let trackIdsWithVars = []
 	// const playlistId = req.query.playlistId
 	// const sortingParams = req.query.sortingParams
-	sortingParams = ["tempo"]
 	//We also want to get the sorting parameters as a list from the query params
 	const playlistId = '4KK6ZMTlEeJ3B5A68YfU7V';
 	let request = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
