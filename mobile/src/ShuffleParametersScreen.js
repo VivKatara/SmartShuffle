@@ -12,10 +12,10 @@ export default class ShuffleParametersScreen extends Component {
     super(props);
     this.state = {
       playlistObject: this.props.navigation.getParam("playlist", {}),
-      v1: 0.5,
-      v2: 0.5,
-      v3: 0.5,
-      v4: 0.5,
+      tempo: 0.5,
+      energy: 0.5,
+      danceability: 0.5,
+      instrumentalness: 0.5,
       pickerItems: [],
       genreName: "",
       showSpinner: false,
@@ -27,7 +27,7 @@ export default class ShuffleParametersScreen extends Component {
       let pickerItems = items.map((a, i) => {
         return {value: items[i]}
       })
-      console.log(pickerItems)
+      console.log("PICKER ITEMS!!!!", pickerItems)
       this.setState({
         pickerItems: pickerItems,
       })
@@ -41,6 +41,18 @@ export default class ShuffleParametersScreen extends Component {
     }
   }
 
+  async getSortedPlaylist = () => {
+    let request = "https://localhost:3000/smartshuffle?"
+      +"tempo=" + this.state.tempo
+      + "&danceability=" + this.state.danceability
+      + "&instrumentalness=" this.state.instrumentalness
+      + "&energy=" + this.state.energy; 
+
+      const response = await fetch(request); 
+      console.log(response); 
+
+
+  }
 
 
   render() {
@@ -50,45 +62,51 @@ export default class ShuffleParametersScreen extends Component {
           <Text style={styles.maintenanceForm}>Shuffle Parameters:  {this.state.playlistObject.name}</Text>
         </View>
         <View style={{paddingLeft: 6, flex: 180, alignSelf:"stretch", justifyContent:"space-around"}}>
-            <Text>BPM: {this.state.v1}</Text>
+            <Text>Tempo: {this.state.tempo}</Text>
             <Slider
                 thumbTintColor= "#1DB954"
-                value={Math.round( this.state.v1 * 100 ) / 100}
-                onValueChange={v1 => this.setState({ v1: Math.round( v1 * 100 ) / 100 })}
+                value={Math.round( this.state.tempo * 100 ) / 100}
+                onValueChange={tempo => this.setState({ tempo: Math.round( tempo * 100 ) / 100 })}
             />
-            <Text>Happiness/Mood: {this.state.v2}</Text>
+            <Text>Energy: {this.state.energy}</Text>
             <Slider
                 thumbTintColor= "#1DB954"
-                value={Math.round( this.state.v2 * 100 ) / 100}
-                onValueChange={v2 => this.setState({ v2: Math.round( v2 * 100 ) / 100 })}
+                value={Math.round( this.state.energy * 100 ) / 100}
+                onValueChange={energy => this.setState({ energy: Math.round( energy * 100 ) / 100 })}
             />
 
             <ActivityIndicator style={{paddingBottom:30, flex: 1, justifyContent: 'center'  }} size={76} color="#1DB954" animating={this.state.showSpinner}/>
-            <Text>Danceability: {this.state.v3}</Text>
+            <Text>Danceability: {this.state.danceability}</Text>
             <Slider
                 thumbTintColor= "#1DB954"
-                value={Math.round( this.state.v3 * 100 ) / 100}
-                onValueChange={v3 => this.setState({ v3: Math.round( v3 * 100 ) / 100 })}
+                value={Math.round( this.state.danceability * 100 ) / 100}
+                onValueChange={danceability => this.setState({ danceability: Math.round( danceability * 100 ) / 100 })}
             />
-            <Text>Instrumentation: {this.state.v4}</Text>
+            <Text>Instrumentalness: {this.state.instrumentalness}</Text>
             <Slider
                 thumbTintColor= "#1DB954"
-                value={Math.round( this.state.v4 * 100 ) / 100}
-                onValueChange={v4 => this.setState({ v4: Math.round( v4 * 100 ) / 100 })}
+                value={Math.round( this.state.instrumentalness * 100 ) / 100}
+                onValueChange={instrumentalness => this.setState({ instrumentalness: Math.round( instrumentalness * 100 ) / 100 })}
             />
             <Dropdown label='Genre' onChangeText={(itemValue, itemIndex) => this.categoryValueChange(itemValue)} data={this.state.pickerItems}/>
             <View style={{paddingLeft: 6, height:30, alignSelf:"stretch", justifyContent:"space-around"}}></View>
         </View>
         <View style={{flex: 70, alignSelf:"stretch", justifyContent:"center", alignItems: "center"}}>
-          <TouchableOpacity style={styles.submitButton} disabled={!(this.state.genreName !== "")} onPress={() => {
+          <TouchableOpacity  style={styles.submitButton} disabled={!(this.state.genreName !== "")} onPress={() => {
               this.setState({
                 showSpinner: true,
             });
+
+            this.getSortedPlaylist()
             let ok = setTimeout(() => {
                 this.setState({
                   showSpinner: false,
               });
-              this.props.navigation.navigate("player");
+
+
+              // console.log("got the sorted playlist");
+            this.props.navigation.navigate("player");
+
             }, 5000);
             }}>
             <View style={{flex: 1, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
