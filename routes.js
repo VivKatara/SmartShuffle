@@ -75,6 +75,10 @@ app.get('/smartshuffle', async (req, res) => {
 	let acousticWeight = req.query.acousticness || 0
 	let weights = [tempoWeight, danceWeight, energyWeight, instrumentWeight, livenessWeight, loudnessWeight, speechWeight, valenceWeight, acousticWeight]
 
+	//Get peak from request
+	let peak = req.query.peak
+	let length = 0
+	let peakElement = 0
 
 	// const playlistId = req.query.playlistId
 	const playlistId = '4KK6ZMTlEeJ3B5A68YfU7V';
@@ -82,8 +86,8 @@ app.get('/smartshuffle', async (req, res) => {
 
 	let headers = 
   	{
-		// 'Authorization' : 'Bearer ' + req.query.token,
-		'Authorization': authToken,
+		'Authorization' : 'Bearer ' + req.query.token,
+		// 'Authorization': authToken,
       	'Content-Type': 'application/json',
       	'Content-Length': '0'
 	}
@@ -92,18 +96,45 @@ app.get('/smartshuffle', async (req, res) => {
 	.then(async (data) => {
 		let items = data["items"];
 		trackIds = getTrackIdsFromPlaylist(items);
+		length = trackIds.length
+
 		trackIdsWithVars = await appendAudioFeatures(trackIds, sortingParams, headers);
 		trackIdsWithWeights = calculateTotalScore(trackIdsWithVars, weights)
 		trackScoreObject = createTrackScoreObject(trackIdsWithWeights)
-		console.log(trackScoreObject)
+
+		//Sort tracks normally, and then sort around a peak
+		peakElement = Math.round(peak * length)
 		let sorted_tracks = sort(trackIdsWithWeights, 1);
-		res.send(JSON.stringify(sorted_tracks));
+		peakSortedTracks = sortTracksByPeak(peakElement, length, sorted_tracks)
+
+		res.send(JSON.stringify(peakSortedTracks));
 	}).catch((err) => {
 		console.log(err);
 	})
 })
 
-
+//Sorts around a peak
+function sortTracksByPeak(peakElement, length, sorted_tracks) {
+	let index = length - 1
+	let sortedTracksByPeak = Array(length)
+	let rightIndex = peakElement + 1
+	let leftIndex = peakElement - 1
+	sortedTracksByPeak[peakElement] = sorted_tracks[index]
+	index -= 1
+	while (index >= 0) {
+		if (index >= 0 && rightIndex < length) {
+			sortedTracksByPeak[rightIndex] = sorted_tracks[index]
+			rightIndex += 1
+			index -= 1
+		}
+		if (index >= 0 && leftIndex >= 0) {
+			sortedTracksByPeak[leftIndex] = sorted_tracks[index]
+			leftIndex -= 1
+			index -= 1
+		}
+	}
+	return sortedTracksByPeak
+}
 
 //As of now, this just sorts on tempo
 function sort(tracks, index){
