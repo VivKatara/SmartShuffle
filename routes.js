@@ -86,7 +86,8 @@ app.get('/smartshuffle', async (req, res) => {
 		trackIds = getTrackIdsFromPlaylist(items);
 		trackIdsWithVars = await appendAudioFeatures(trackIds, sortingParams);
 		console.log(trackIdsWithVars)
-		// let sorted_tracks = sort(trackIdsWithVars, 1);
+		let sorted_tracks = sort(trackIdsWithVars, 1);
+		console.log(sorted_tracks)
 		// res.send(JSON.stringify(sorted_tracks));
 	}).catch((err) => {
 		console.log(err);
@@ -97,7 +98,7 @@ app.get('/smartshuffle', async (req, res) => {
 function sort(tracks, index){
 	var sort_index = index;
 	var sorted_array = tracks.sort(function(a, b) {
-		return a[sort_index] > b[sort_index] ? 1: -1;
+		return a[sort_index][0] > b[sort_index][0] ? 1: -1;
 	});
 	var song_array = [];
 	for (var i = 0; i < sorted_array.length;i++){
@@ -113,15 +114,20 @@ async function appendAudioFeatures(trackIds, sortingParams) {
 		'Content-Type': 'application/json',
 		'Content-Length': 0
 	}
-	let trackIdsWithVars = {}
+	let trackIdsWithVars = []
+	// let trackIdsWithVars = {}
 	for (track in trackIds) {
 		const url = "https://api.spotify.com/v1/audio-features/" + trackIds[track]
 		await fetch(url, {method: 'GET', headers: headers}).then(response => response.json())
 		.then((data) => {
-			trackIdsWithVars[trackIds[track]] = []
+			// trackIdsWithVars[trackIds[track]] = []
+			let parametersArray = []
 			for (parameter in sortingParams) {
-				trackIdsWithVars[trackIds[track]].push(data[sortingParams[parameter]])
+				parametersArray.push(data[sortingParams[parameter]])
+				// trackIdsWithVars[trackIds[track]].push(data[sortingParams[parameter]])
 			}
+			// trackIdsWithVars.push([0, 1])
+			trackIdsWithVars.push([trackIds[track], parametersArray])
 		}).catch((err) => {
 			console.log(err)
 		})
