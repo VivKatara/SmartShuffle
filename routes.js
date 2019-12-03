@@ -92,21 +92,20 @@ app.get('/smartshuffle', async (req, res) => {
 		trackIds = getTrackIdsFromPlaylist(items);
 		trackIdsWithVars = await appendAudioFeatures(trackIds, sortingParams);
 		trackIdsWithWeights = calculateTotalScore(trackIdsWithVars, weights)
-		console.log(trackIdsWithWeights)
-
-		//TODO: Sort based on total score in trackIdsWithWeights
-		let sorted_tracks = sort(trackIdsWithVars, 1);
+		let sorted_tracks = sort(trackIdsWithWeights, 1);
 		res.send(JSON.stringify(sorted_tracks));
 	}).catch((err) => {
 		console.log(err);
 	})
 })
 
+
+
 //As of now, this just sorts on tempo
 function sort(tracks, index){
 	var sort_index = index;
 	var sorted_array = tracks.sort(function(a, b) {
-		return a[sort_index][0] > b[sort_index][0] ? 1: -1;
+		return a[sort_index] > b[sort_index] ? 1: -1;
 	});
 	var song_array = [];
 	for (var i = 0; i < sorted_array.length;i++){
@@ -116,6 +115,7 @@ function sort(tracks, index){
 	return song_array;
 }
 
+//Calculates total score for a song based on weights for all params
 function calculateTotalScore(trackIdsWithVars, weights) {
 	let trackIdsWithWeights = []
 	let track = 0
