@@ -62,12 +62,22 @@ app.get('/getPlaylists', async (req, res) => {
 app.get('/smartshuffle', async (req, res) => {
 	let trackIds = []
 	let trackIdsWithVars = []
+
+	//Accumulating all the weights
+	let tempoWeight = req.query.tempo || 0
+	let danceWeight = req.query.danceability || 0
+	let energyWeight = req.query.energy || 0
+	let instrumentWeight = req.query.instrumentalness || 0
+	let livenessWeight = req.query.liveness || 0
+	let loudnessWeight = req.query.loudness || 0
+	let speechWeight = req.query.speechiness || 0
+	let valenceWeight = req.query.valence || 0
+	let acousticWeight = req.query.acousticness || 0
+	let weights = [tempoWeight, danceWeight, energyWeight, instrumentWeight, livenessWeight, loudnessWeight, speechWeight, valenceWeight, acousticWeight]
+
 	// const playlistId = req.query.playlistId
-	// const sortingParams = req.query.sortingParams
-	//We also want to get the sorting parameters as a list from the query params
 	const playlistId = '4KK6ZMTlEeJ3B5A68YfU7V';
 	let request = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
-	console.log(request);
 
 	let headers = 
   	{
@@ -81,7 +91,10 @@ app.get('/smartshuffle', async (req, res) => {
 		let items = data["items"];
 		trackIds = getTrackIdsFromPlaylist(items);
 		trackIdsWithVars = await appendAudioFeatures(trackIds, sortingParams);
-		console.log(trackIdsWithVars)
+		trackIdsWithWeights = calculateTotalScore(trackIdsWithVars, weights)
+		console.log(trackIdsWithWeights)
+
+		//TODO: Sort based on total score in trackIdsWithWeights
 		let sorted_tracks = sort(trackIdsWithVars, 1);
 		res.send(JSON.stringify(sorted_tracks));
 	}).catch((err) => {
@@ -103,6 +116,25 @@ function sort(tracks, index){
 	return song_array;
 }
 
+function calculateTotalScore(trackIdsWithVars, weights) {
+	let trackIdsWithWeights = []
+	let track = 0
+	let score = 0
+	let trackValues = []
+	let pushItem = []
+	for (tuple in trackIdsWithVars) {
+		track = trackIdsWithVars[tuple][0]
+		trackValues = trackIdsWithVars[tuple][1]
+		for (value in trackValues) {
+			score += (trackValues[value] * weights[value])
+		}
+		pushItem = [track, score]
+		trackIdsWithWeights.push(pushItem)
+		score = 0;
+	}
+	return trackIdsWithWeights
+}
+
 async function appendAudioFeatures(trackIds, sortingParams) {
 	let headers = {
 		'Authorization': authToken,
@@ -115,11 +147,17 @@ async function appendAudioFeatures(trackIds, sortingParams) {
 		const url = "https://api.spotify.com/v1/audio-features/" + trackIds[track]
 		await fetch(url, {method: 'GET', headers: headers}).then(response => response.json())
 		.then((data) => {
-			// trackIdsWithVars[trackIds[track]] = []
 			let parametersArray = []
 			for (parameter in sortingParams) {
-				parametersArray.push(data[sortingParams[parameter]])
-				// trackIdsWithVars[trackIds[track]].push(data[sortingParams[parameter]])
+				if (sortingParams[parameter] == "tempo") {
+					parametersArray.push(normalize(data[sortingParams[parameter]], 40, 220))
+				}
+				else if (sortingParams[parameter] == "loudness") {
+					parametersArray.push(normalize(data[sortingParams[parameter]], -60, 0))
+				}
+				else {
+					parametersArray.push(data[sortingParams[parameter]])
+				}
 			}
 			trackIdsWithVars.push([trackIds[track], parametersArray])
 		}).catch((err) => {
@@ -127,6 +165,12 @@ async function appendAudioFeatures(trackIds, sortingParams) {
 		})
 	}
 	return trackIdsWithVars
+}
+
+
+//Citing source: https://stackoverflow.com/questions/39776819/function-to-normalize-any-number-from-0-1
+function normalize(val, min, max) {
+	return (val - min)  / (max - min)
 }
 
 // async function appendAudioFeatures(trackIds) {
