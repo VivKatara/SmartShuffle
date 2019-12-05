@@ -6,6 +6,8 @@ const crypto = require('crypto');
 const { URL } = require('url');
 const QueryString = require('querystring');
 const playlist_response = require('./sample_response.js')
+const sort = require('./backend_modules/sort.js')
+const playlist = require('./backend_modules/playlist.js')
 
 const {spBaseUrl, port, sortParams, authToken} = require('./config');
 
@@ -47,7 +49,7 @@ app.get('/getPlaylists', async (req, res) => {
   		}
 	   
 	   
-//  		res.send(response);
+ 		res.send(response);
 
 //	      console.log(data); 
 	   })
@@ -86,8 +88,8 @@ app.get('/smartshuffle', async (req, res) => {
 
 	let headers = 
   	{
-		'Authorization' : 'Bearer ' + req.query.token,
-		// 'Authorization': authToken,
+		// 'Authorization' : 'Bearer ' + req.query.token,
+		'Authorization': authToken,
       	'Content-Type': 'application/json',
       	'Content-Length': '0'
 	}
@@ -95,17 +97,17 @@ app.get('/smartshuffle', async (req, res) => {
 	await fetch(request, {method: 'GET', headers: headers}).then(response => response.json())
 	.then(async (data) => {
 		let items = data["items"];
-		trackIds = getTrackIdsFromPlaylist(items);
+		trackIds = playlist.getTrackIdsFromPlaylist(items);
 		length = trackIds.length
 
 		trackIdsWithVars = await appendAudioFeatures(trackIds, sortingParams, headers);
-		trackIdsWithWeights = calculateTotalScore(trackIdsWithVars, weights)
-		trackScoreObject = createTrackScoreObject(trackIdsWithWeights)
+		trackIdsWithWeights = sort.calculateTotalScore(trackIdsWithVars, weights)
+		trackScoreObject = sort.createTrackScoreObject(trackIdsWithWeights)
 
 		//Sort tracks normally, and then sort around a peak
 		peakElement = Math.round(peak * length)
-		let sorted_tracks = sort(trackIdsWithWeights, 1);
-		peakSortedTracks = sortTracksByPeak(peakElement, length, sorted_tracks)
+		let sorted_tracks = sort.sort(trackIdsWithWeights, 1);
+		let peakSortedTracks = sort.peakSort(peakElement, length, sorted_tracks);
 
 		res.send(JSON.stringify(peakSortedTracks));
 	}).catch((err) => {
@@ -113,66 +115,8 @@ app.get('/smartshuffle', async (req, res) => {
 	})
 })
 
-//Sorts around a peak
-function sortTracksByPeak(peakElement, length, sorted_tracks) {
-	let index = length - 1
-	let sortedTracksByPeak = Array(length)
-	let rightIndex = peakElement + 1
-	let leftIndex = peakElement - 1
-	sortedTracksByPeak[peakElement] = sorted_tracks[index]
-	index -= 1
-	while (index >= 0) {
-		if (index >= 0 && rightIndex < length) {
-			sortedTracksByPeak[rightIndex] = sorted_tracks[index]
-			rightIndex += 1
-			index -= 1
-		}
-		if (index >= 0 && leftIndex >= 0) {
-			sortedTracksByPeak[leftIndex] = sorted_tracks[index]
-			leftIndex -= 1
-			index -= 1
-		}
-	}
-	return sortedTracksByPeak
-}
-
-//As of now, this just sorts on tempo
-function sort(tracks, index){
-	var sort_index = index;
-	var sorted_array = tracks.sort(function(a, b) {
-		return a[sort_index] > b[sort_index] ? 1: -1;
-	});
-	var song_array = [];
-	for (var i = 0; i < sorted_array.length;i++){
-		var song = sorted_array[i][0];
-		song_array.push(song);
-	}
-	return song_array;
-}
-
-//Calculates total score for a song based on weights for all params
-function calculateTotalScore(trackIdsWithVars, weights) {
-	let trackIdsWithWeights = []
-	let track = 0
-	let score = 0
-	let trackValues = []
-	let pushItem = []
-	for (tuple in trackIdsWithVars) {
-		track = trackIdsWithVars[tuple][0]
-		trackValues = trackIdsWithVars[tuple][1]
-		for (value in trackValues) {
-			score += (trackValues[value] * weights[value])
-		}
-		pushItem = [track, score]
-		trackIdsWithWeights.push(pushItem)
-		score = 0;
-	}
-	return trackIdsWithWeights
-}
-
 async function appendAudioFeatures(trackIds, sortingParams, headers) {
 	let trackIdsWithVars = []
-	// let trackIdsWithVars = {}
 	for (track in trackIds) {
 		const url = "https://api.spotify.com/v1/audio-features/" + trackIds[track]
 		await fetch(url, {method: 'GET', headers: headers}).then(response => response.json())
@@ -197,234 +141,11 @@ async function appendAudioFeatures(trackIds, sortingParams, headers) {
 	return trackIdsWithVars
 }
 
-function createTrackScoreObject(trackIdsWithWeights) {
-	trackScoreObject = {}
-	let track = 0
-	let score = 0
-	for (tuple in trackIdsWithWeights) {
-		track = trackIdsWithWeights[tuple][0]
-		score = trackIdsWithWeights[tuple][1]
-		trackScoreObject[track] = score
-	}
-	return trackScoreObject
-}
-
 
 //Citing source: https://stackoverflow.com/questions/39776819/function-to-normalize-any-number-from-0-1
 function normalize(val, min, max) {
 	return (val - min)  / (max - min)
 }
-
-// async function appendAudioFeatures(trackIds) {
-// 	let headers = 
-//   	{
-// 		'Authorization' : authToken,
-// 		'Content-Type': 'application/json',
-//       	'Content-Length': '0'
-// 	}
-// 	let trackIdsWithVars = []
-// 	for (track in trackIds) {
-// 		const url = "https://api.spotify.com/v1/audio-features/" + trackIds[track];
-// //		const url = getUrl("/audio-analysis/" + track);
-// //		console.log(track)
-// 		await fetch(url, {method: 'GET', headers: headers}).then(response => response.json())
-// 		.then((data) => {
-// //			console.log(data);
-// 			trackIdsWithVars.push([trackIds[track], data["tempo"]])
-// 		}).catch((err) => {
-// 			console.log(err)
-// 		})
-// 	}
-// 	return trackIdsWithVars
-// }
-
-function getTrackIdsFromPlaylist(data) {
-	let trackIds = []
-	for (key in data) {
-		trackIds.push(data[key]["track"]["id"]);
-	}
-	return trackIds;
-}
-
-function getUrl(route) {
-	return spBaseUrl + route;''
-}
-
-
-// init spotify config
-// const spClientCallback = process.env.SPOTIFY_CLIENT_CALLBACK;
-// const authString = Buffer.from(spClientId+':'+spClientSecret).toString('base64');
-// const authHeader = Basic ${authString};
-// const spotifyEndpoint = 'https://accounts.spotify.com/api/token';
-
-// // encryption
-// const encSecret = process.env.ENCRYPTION_SECRET;
-// const encMethod = process.env.ENCRYPTION_METHOD || "aes-256-ctr";
-// const encrypt = (text) => {
-// 	const aes = crypto.createCipher(encMethod, encSecret);
-// 	let encrypted = aes.update(text, 'utf8', 'hex');
-// 	encrypted += aes.final('hex');
-// 	return encrypted;
-// };
-// const decrypt = (text) => {
-// 	const aes = crypto.createDecipher(encMethod, encSecret);
-// 	let decrypted = aes.update(text, 'hex', 'utf8');
-// 	decrypted += aes.final('utf8');
-// 	return decrypted;
-// };
-
-// // handle sending POST request
-// function postRequest(url, data={}) {
-// 	return new Promise((resolve, reject) => {
-// 		// build request data
-// 		url = new URL(url);
-// 		const reqData = {
-// 			protocol: url.protocol,
-// 			hostname: url.hostname,
-// 			port: url.port,
-// 			path: url.pathname,
-// 			method: 'POST',
-// 			headers: {
-// 				'Authorization': authHeader,
-// 				'Content-Type': 'application/x-www-form-urlencoded'
-// 			}
-// 		}
-
-// 		// create request
-// 		const req = https.request(reqData, (res) => {
-// 			// build response
-// 			let buffers = [];
-// 			res.on('data', (chunk) => {
-// 				buffers.push(chunk);
-// 			});
-
-// 			res.on('end', () => {
-// 				// parse response
-// 				let result = null;
-// 				try {
-// 					result = Buffer.concat(buffers);
-// 					result = result.toString();
-// 					var contentType = res.headers['content-type'];
-// 					if(typeof contentType == 'string') {
-// 						contentType = contentType.split(';')[0].trim();
-// 					}
-// 					if(contentType == 'application/x-www-form-urlencoded') {
-// 						result = QueryString.parse(result);
-// 					}
-// 					else if(contentType == 'application/json') {
-// 						result = JSON.parse(result);
-// 					}
-// 				}
-// 				catch(error) {
-// 					error.response = res;
-// 					error.data = result;
-// 					reject(error);
-// 					return;
-// 				}
-// 				resolve({response: res, result: result});
-// 			});
-// 		});
-
-// 		// handle error
-// 		req.on('error', (error) => {
-// 			reject(error);
-// 		});
-
-// 		// send
-// 		data = QueryString.stringify(data);
-// 		req.write(data);
-// 		req.end();
-// 	});
-// }
-
-// // support form body
-// app.use(express.urlencoded({extended: false}));
-
-// /**
-//  * Swap endpoint
-//  * Uses an authentication code on body to request access and refresh tokens
-//  */
-// app.post('/swap', async (req, res) => {
-// 	try {
-// 		// build request data
-// 		const reqData = {
-// 			grant_type: 'authorization_code',
-// 			redirect_uri: spClientCallback,
-// 			code: req.body.code
-// 		};
-
-// 		// get new token from Spotify API
-// 		const { response, result } = await postRequest(spotifyEndpoint, reqData);
-
-// 		// encrypt refresh_token
-// 		if (result.refresh_token) {
-// 			result.refresh_token = encrypt(result.refresh_token);
-// 		}
-
-// 		// send response
-// 		res.status(response.statusCode).json(result);
-// 	}
-// 	catch(error) {
-// 		if(error.response) {
-// 			res.status(error.response.statusCode);
-// 		}
-// 		else {
-// 			res.status(500);
-// 		}
-// 		if(error.data) {
-// 			res.send(error.data);
-// 		}
-// 		else {
-// 			res.send("");
-// 		}
-// 	}
-// });
-
-// /**
-//  * Refresh endpoint
-//  * Uses the refresh token on request body to get a new access token
-//  */
-// app.post('/refresh', async (req, res) => {
-// 	try {
-// 		// ensure refresh token parameter
-// 		if (!req.body.refresh_token) {
-// 			res.status(400).json({error: 'Refresh token is missing from body'});
-// 			return;
-// 		}
-
-// 		// decrypt token
-// 		const refreshToken = decrypt(req.body.refresh_token);
-// 		// build request data
-// 		const reqData = {
-// 			grant_type: 'refresh_token',
-// 			refresh_token: refreshToken
-// 		};
-// 		// get new token from Spotify API
-// 		const { response, result } = await postRequest(spotifyEndpoint, reqData);
-
-// 		// encrypt refresh_token
-// 		if (result.refresh_token) {
-// 			result.refresh_token = encrypt(result.refresh_token);
-// 		}
-
-// 		// send response
-// 		res.status(response.statusCode).json(result);
-// 	}
-// 	catch(error) {
-// 		if(error.response) {
-// 			res.status(error.response.statusCode);
-// 		}
-// 		else {
-// 			res.status(500);
-// 		}
-// 		if(error.data) {
-// 			res.send(error.data);
-// 		}
-// 		else {
-// 			res.send("");
-// 		}
-// 	}
-// });
 
 // start server
 app.listen(port || 3200, () => {
