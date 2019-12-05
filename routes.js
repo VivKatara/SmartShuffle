@@ -123,7 +123,7 @@ app.get('/mergePlaylists', async (req, res) => {
 		'Content-Type': 'application/json',
 		'Content-Length': '0'
 	}
-	
+
 	let playlistsToMerge = ["3wda1hegnus9iiw3lldj7lga6", "3KWLpSp2FWi5xkJHTM1nfy"]
 	// let name = req.query.name
 	let name = "New Merged Playlist"
