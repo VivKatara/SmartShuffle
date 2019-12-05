@@ -45,7 +45,7 @@ export default class ShuffleParametersScreen extends Component {
     let request = "https://localhost:3000/smartshuffle?"
       +"tempo=" + this.state.tempo
       + "&danceability=" + this.state.danceability
-      + "&instrumentalness=" this.state.instrumentalness
+      + "&instrumentalness=" + this.state.instrumentalness
       + "&energy=" + this.state.energy; 
 
       const response = await fetch(request); 

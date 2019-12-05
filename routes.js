@@ -5,9 +5,26 @@ const fetch = require('node-fetch');
 const crypto = require('crypto');
 const { URL } = require('url');
 const QueryString = require('querystring');
-const playlist_response = require('./sample_response.js')
+const playlist_response = require('./sample_response.js'); 
 
-const {spClientId, spClientSecret, spBaseUrl, authToken, port} = require('./config');
+//config firebase 
+const admin = require('firebase-admin');
+const functions = require('firebase-functions');
+//initialize firebase app 
+var serviceAccount = require("./serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://smartshuffle.firebaseio.com"
+});
+
+let db = admin.firestore();
+
+//some firebase collections for songs, playlists, songtime, etc. 
+let trackRef = db.collection('tracks'); 
+let playlistRef = db.collection('playlistRef'); 
+
+const {spClientId, spClientSecret, spBaseUrl, authToken, port, spotify_token} = require('./config');
 
 //Env vars
 //const {spClientId, spClientSecret, spBaseUrl, port} = require('./config');
@@ -23,46 +40,99 @@ app.get('/', (req, res) => {
 	res.send("Soon to be cool spotify-stuff");
 });
 
+app.get('/getPlaylists', async (req, res) => {
+  console.log("trying to get some songs", req.query.token); 
+  let request = "https://api.spotify.com/v1/me/playlists";
 
-app.get('/getPlaylists', function (req, res) {
-  console.log("trying to get some songs", req.query.token); 
-  let request = "https://api.spotify.com/v1/me/playlists";
-  let headers = 
-  {
-    	'Authorization' : 'Bearer ' + req.query.token,
-      'Content-Type': 'application/json',
-      'Content-Length': '0'
-      // 'Content-Type': 'application/x-www-form-urlencoded',
-}
+	let headers = 
+	  {
+	    	'Authorization' : req.query.token,
+	      'Content-Type': 'application/json',
+	      'Content-Length': '0'
+	      // 'Content-Type': 'application/x-www-form-urlencoded',
+	}
 
-   fetch(request, { 'headers': headers})
-	   .then(res => res.json())
-	   .then(data => {
-	      let response = []; 
-	      //console.log("DATA: ", data); 
-		  let tracks = data.items; 
-		  for(let i = 0; i < tracks.length; i++){
-		  	let trackData = {}
-		  	trackData.id = tracks[i].id;
-		  	trackData.name = tracks[i].name; 
-		  	trackData.images = tracks[i].images; 
-		  	response.push(trackData); 
-  		}
-	   
-	   
-//  		res.send(response);
+   await fetch(request, { 'headers': headers})
+   .then(res => res.json())
+   .then(data => {
+      let response = []; 
+      //console.log("DATA: ", data); 
+  let tracks = data.items; 
+  for(let i = 0; i < tracks.length; i++){
+  let trackData = {}
+  trackData.id = tracks[i].id;
+  trackData.name = tracks[i].name; 
+  trackData.images = tracks[i].images; 
+  response.push(trackData); 
+  }
 
-//	      console.log(data); 
-	   })
-	   .catch(err => {
-	      res.send(err);
-   });
+	console.log("data is: ", data); 
+   let setPlaylist = playlistRef.doc('playlist1').set({
+	  list: response 
+	});
+   	
+   	console.log(data);
+	res.send(response);
+
+   
+   
+ res.send(response);
+
+//      console.log(data); 
+   })
+   .catch(err => {
+      res.send(err);
+   });
  
-  
-  //do auth stuff and forward request
+  
+  //do auth stuff and forward request
 })
 
+// app.get('/getPlaylists', function (req, res) {
+// 		console.log("im here!!!");
+//   //console.log("trying to get some songs", req.query.token); 
+//   let request = "https://api.spotify.com/v1/me/playlists";
+//   let headers = 
+//   {
+//     	'Authorization' : 'Bearer ' + spotify_token, //req.query.token,
+//       'Content-Type': 'application/json',
+//       'Content-Length': '0'
+//       // 'Content-Type': 'application/x-www-form-urlencoded',
+// }
+
+//    fetch(request, { 'headers': headers})
+// 	   .then(res => res.json())
+// 	   .then(data => {
+// 	      let response = []; 
+// 	      //console.log("DATA: ", data); 
+// 		  let tracks = data.items; 
+// 		  for(let i = 0; i < tracks.length; i++){
+// 		  	let trackData = {}
+// 		  	trackData.id = tracks[i].id;
+// 		  	trackData.name = tracks[i].name; 
+// 		  	trackData.images = tracks[i].images; 
+// 		  	response.push(trackData); 
+//   		}
+// 	   console.log("data is: ", data); 
+// 	   let setPlaylist = playlistRef.doc('playlist1').set({
+// 		  list: response 
+// 		});
+	   	
+// 	   	console.log(data);
+//  		res.send(response);
+
+// //	      console.log(data); 
+// 	   })
+// 	   .catch(err => {
+// 	      res.send(err);
+//    });
+ 
+  
+//   //do auth stuff and forward request
+// })
+
 app.get('/smartshuffle', async (req, res) => {
+
 	let trackIds = []
 	let trackIdsWithVars = []
 	// const playlistId = req.playlistId
@@ -88,7 +158,6 @@ app.get('/smartshuffle', async (req, res) => {
 		console.log("track_ids:", trackIds);
 		trackIdsWithVars = await appendAudioAnalysis(trackIds);
 		console.log("with vars:", trackIdsWithVars);
-		
 		
 		let sorted_tracks = sort(trackIdsWithVars, 1);
 		console.log("sorted:", sorted_tracks);
@@ -150,182 +219,182 @@ function getUrl(route) {
 }
 
 
-// init spotify config
-const spClientCallback = process.env.SPOTIFY_CLIENT_CALLBACK;
-const authString = Buffer.from(spClientId+':'+spClientSecret).toString('base64');
-const authHeader = Basic ${authString};
-const spotifyEndpoint = 'https://accounts.spotify.com/api/token';
+// // init spotify config
+// const spClientCallback = process.env.SPOTIFY_CLIENT_CALLBACK;
+// const authString = Buffer.from(spClientId+':'+spClientSecret).toString('base64');
+// const authHeader = Basic ${authString};
+// const spotifyEndpoint = 'https://accounts.spotify.com/api/token';
 
-// encryption
-const encSecret = process.env.ENCRYPTION_SECRET;
-const encMethod = process.env.ENCRYPTION_METHOD || "aes-256-ctr";
-const encrypt = (text) => {
-	const aes = crypto.createCipher(encMethod, encSecret);
-	let encrypted = aes.update(text, 'utf8', 'hex');
-	encrypted += aes.final('hex');
-	return encrypted;
-};
-const decrypt = (text) => {
-	const aes = crypto.createDecipher(encMethod, encSecret);
-	let decrypted = aes.update(text, 'hex', 'utf8');
-	decrypted += aes.final('utf8');
-	return decrypted;
-};
+// // encryption
+// const encSecret = process.env.ENCRYPTION_SECRET;
+// const encMethod = process.env.ENCRYPTION_METHOD || "aes-256-ctr";
+// const encrypt = (text) => {
+// 	const aes = crypto.createCipher(encMethod, encSecret);
+// 	let encrypted = aes.update(text, 'utf8', 'hex');
+// 	encrypted += aes.final('hex');
+// 	return encrypted;
+// };
+// const decrypt = (text) => {
+// 	const aes = crypto.createDecipher(encMethod, encSecret);
+// 	let decrypted = aes.update(text, 'hex', 'utf8');
+// 	decrypted += aes.final('utf8');
+// 	return decrypted;
+// };
 
-// handle sending POST request
-function postRequest(url, data={}) {
-	return new Promise((resolve, reject) => {
-		// build request data
-		url = new URL(url);
-		const reqData = {
-			protocol: url.protocol,
-			hostname: url.hostname,
-			port: url.port,
-			path: url.pathname,
-			method: 'POST',
-			headers: {
-				'Authorization': authHeader,
-				'Content-Type': 'application/x-www-form-urlencoded'
-			}
-		}
+// // handle sending POST request
+// function postRequest(url, data={}) {
+// 	return new Promise((resolve, reject) => {
+// 		// build request data
+// 		url = new URL(url);
+// 		const reqData = {
+// 			protocol: url.protocol,
+// 			hostname: url.hostname,
+// 			port: url.port,
+// 			path: url.pathname,
+// 			method: 'POST',
+// 			headers: {
+// 				'Authorization': authHeader,
+// 				'Content-Type': 'application/x-www-form-urlencoded'
+// 			}
+// 		}
 
-		// create request
-		const req = https.request(reqData, (res) => {
-			// build response
-			let buffers = [];
-			res.on('data', (chunk) => {
-				buffers.push(chunk);
-			});
+// 		// create request
+// 		const req = https.request(reqData, (res) => {
+// 			// build response
+// 			let buffers = [];
+// 			res.on('data', (chunk) => {
+// 				buffers.push(chunk);
+// 			});
 
-			res.on('end', () => {
-				// parse response
-				let result = null;
-				try {
-					result = Buffer.concat(buffers);
-					result = result.toString();
-					var contentType = res.headers['content-type'];
-					if(typeof contentType == 'string') {
-						contentType = contentType.split(';')[0].trim();
-					}
-					if(contentType == 'application/x-www-form-urlencoded') {
-						result = QueryString.parse(result);
-					}
-					else if(contentType == 'application/json') {
-						result = JSON.parse(result);
-					}
-				}
-				catch(error) {
-					error.response = res;
-					error.data = result;
-					reject(error);
-					return;
-				}
-				resolve({response: res, result: result});
-			});
-		});
+// 			res.on('end', () => {
+// 				// parse response
+// 				let result = null;
+// 				try {
+// 					result = Buffer.concat(buffers);
+// 					result = result.toString();
+// 					var contentType = res.headers['content-type'];
+// 					if(typeof contentType == 'string') {
+// 						contentType = contentType.split(';')[0].trim();
+// 					}
+// 					if(contentType == 'application/x-www-form-urlencoded') {
+// 						result = QueryString.parse(result);
+// 					}
+// 					else if(contentType == 'application/json') {
+// 						result = JSON.parse(result);
+// 					}
+// 				}
+// 				catch(error) {
+// 					error.response = res;
+// 					error.data = result;
+// 					reject(error);
+// 					return;
+// 				}
+// 				resolve({response: res, result: result});
+// 			});
+// 		});
 
-		// handle error
-		req.on('error', (error) => {
-			reject(error);
-		});
+// 		// handle error
+// 		req.on('error', (error) => {
+// 			reject(error);
+// 		});
 
-		// send
-		data = QueryString.stringify(data);
-		req.write(data);
-		req.end();
-	});
-}
+// 		// send
+// 		data = QueryString.stringify(data);
+// 		req.write(data);
+// 		req.end();
+// 	});
+// }
 
-// support form body
-app.use(express.urlencoded({extended: false}));
+// // support form body
+// app.use(express.urlencoded({extended: false}));
 
-/**
- * Swap endpoint
- * Uses an authentication code on body to request access and refresh tokens
- */
-app.post('/swap', async (req, res) => {
-	try {
-		// build request data
-		const reqData = {
-			grant_type: 'authorization_code',
-			redirect_uri: spClientCallback,
-			code: req.body.code
-		};
+// /**
+//  * Swap endpoint
+//  * Uses an authentication code on body to request access and refresh tokens
+//  */
+// app.post('/swap', async (req, res) => {
+// 	try {
+// 		// build request data
+// 		const reqData = {
+// 			grant_type: 'authorization_code',
+// 			redirect_uri: spClientCallback,
+// 			code: req.body.code
+// 		};
 
-		// get new token from Spotify API
-		const { response, result } = await postRequest(spotifyEndpoint, reqData);
+// 		// get new token from Spotify API
+// 		const { response, result } = await postRequest(spotifyEndpoint, reqData);
 
-		// encrypt refresh_token
-		if (result.refresh_token) {
-			result.refresh_token = encrypt(result.refresh_token);
-		}
+// 		// encrypt refresh_token
+// 		if (result.refresh_token) {
+// 			result.refresh_token = encrypt(result.refresh_token);
+// 		}
 
-		// send response
-		res.status(response.statusCode).json(result);
-	}
-	catch(error) {
-		if(error.response) {
-			res.status(error.response.statusCode);
-		}
-		else {
-			res.status(500);
-		}
-		if(error.data) {
-			res.send(error.data);
-		}
-		else {
-			res.send("");
-		}
-	}
-});
+// 		// send response
+// 		res.status(response.statusCode).json(result);
+// 	}
+// 	catch(error) {
+// 		if(error.response) {
+// 			res.status(error.response.statusCode);
+// 		}
+// 		else {
+// 			res.status(500);
+// 		}
+// 		if(error.data) {
+// 			res.send(error.data);
+// 		}
+// 		else {
+// 			res.send("");
+// 		}
+// 	}
+// });
 
-/**
- * Refresh endpoint
- * Uses the refresh token on request body to get a new access token
- */
-app.post('/refresh', async (req, res) => {
-	try {
-		// ensure refresh token parameter
-		if (!req.body.refresh_token) {
-			res.status(400).json({error: 'Refresh token is missing from body'});
-			return;
-		}
+// /**
+//  * Refresh endpoint
+//  * Uses the refresh token on request body to get a new access token
+//  */
+// app.post('/refresh', async (req, res) => {
+// 	try {
+// 		// ensure refresh token parameter
+// 		if (!req.body.refresh_token) {
+// 			res.status(400).json({error: 'Refresh token is missing from body'});
+// 			return;
+// 		}
 
-		// decrypt token
-		const refreshToken = decrypt(req.body.refresh_token);
-		// build request data
-		const reqData = {
-			grant_type: 'refresh_token',
-			refresh_token: refreshToken
-		};
-		// get new token from Spotify API
-		const { response, result } = await postRequest(spotifyEndpoint, reqData);
+// 		// decrypt token
+// 		const refreshToken = decrypt(req.body.refresh_token);
+// 		// build request data
+// 		const reqData = {
+// 			grant_type: 'refresh_token',
+// 			refresh_token: refreshToken
+// 		};
+// 		// get new token from Spotify API
+// 		const { response, result } = await postRequest(spotifyEndpoint, reqData);
 
-		// encrypt refresh_token
-		if (result.refresh_token) {
-			result.refresh_token = encrypt(result.refresh_token);
-		}
+// 		// encrypt refresh_token
+// 		if (result.refresh_token) {
+// 			result.refresh_token = encrypt(result.refresh_token);
+// 		}
 
-		// send response
-		res.status(response.statusCode).json(result);
-	}
-	catch(error) {
-		if(error.response) {
-			res.status(error.response.statusCode);
-		}
-		else {
-			res.status(500);
-		}
-		if(error.data) {
-			res.send(error.data);
-		}
-		else {
-			res.send("");
-		}
-	}
-});
+// 		// send response
+// 		res.status(response.statusCode).json(result);
+// 	}
+// 	catch(error) {
+// 		if(error.response) {
+// 			res.status(error.response.statusCode);
+// 		}
+// 		else {
+// 			res.status(500);
+// 		}
+// 		if(error.data) {
+// 			res.send(error.data);
+// 		}
+// 		else {
+// 			res.send("");
+// 		}
+// 	}
+// });
 
 // start server
 app.listen(port || 3200, () => {
-	console.log(Server is listening on port ${port});
+	console.log("Server is listening on port", port);
 })
