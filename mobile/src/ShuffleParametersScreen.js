@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Alert, Platform, StyleSheet, Text, View, SafeAreaView, Picker, TouchableOpacity, TouchableHighlight } from 'react-native';
 import { Dropdown } from 'react-native-material-dropdown';
 import { NavigationEvents } from 'react-navigation';
-import { ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator, Avatar, IconButton, Appbar, Card } from 'react-native-paper';
 import { Slider } from 'react-native-elements';
 import Spotify from 'rn-spotify-sdk';
 
@@ -44,14 +44,17 @@ export default class ShuffleParametersScreen extends Component {
   }
 
   getSortedPlaylist = async () => {
-    let request = "https://localhost:3000/smartshuffle?"
-      +"tempo=" + this.state.tempo
+    let request = "https://frightful-barrow-37052.herokuapp.com/smartshuffle?"
+      + "tempo=" + this.state.tempo
       + "&danceability=" + this.state.danceability
-      + "&instrumentalness=" + this.state.instrumentalness
-      + "&energy=" + this.state.energy;
+      + "&loudness=" + this.state.instrumentalness
+      + "&peak=" + this.state.energy
+      + "&token=" + "BQAbXo6mvZz-RqP7RXcSk7WEUe2zxApUwN2gZvgmhWSLiE5o6vPsXixY9xVf5witUncu37yM9ehnGv4GgirjI9eqT8d6V5m58JuKqcyDIMlSRHtdDnXg3BhOca4MLsRVHRAG5K4YomGpv6qrDGxRFb2E7xWOIFXqoGl4PMdvnEQMBCCJQACJhdpHzcYiGpqku4mQLYC78w";
 
       const response = await fetch(request);
-      console.log(response);
+      const songs = await response.json();
+      console.log(songs);
+      this.props.navigation.navigate('player', { songIDs: songs });
 
       // TODO: pass to player screen
   }
@@ -121,7 +124,7 @@ export default class ShuffleParametersScreen extends Component {
                     // console.log("got the sorted playlist");
                     this.props.navigation.navigate("player");
 
-                    }, 5000);
+                }, 1000);
                 }}>
                 <View style={{flex: 1, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
                     <Text style = {styles.buttontext}>SHUFFLE</Text>
