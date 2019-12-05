@@ -25,14 +25,14 @@ app.get('/', (req, res) => {
 });
 
 app.get('/getPlaylists', async (req, res) => {
+  let headers = {
+	'Authorization' : 'Bearer ' + req.query.token,
+	// 'Authorization': authToken,
+	'Content-Type': 'application/json',
+	'Content-Length': '0'
+  }
   console.log("trying to get some songs", req.query.token); 
   let request = "https://api.spotify.com/v1/me/playlists";
-  let headers = 
-  {
-		'Authorization' : 'Bearer ' + req.query.token,
-		'Content-Type': 'application/json',
-      'Content-Length': '0'
-}
 
    await fetch(request, { 'headers': headers})
 	   .then(res => res.json())
@@ -62,6 +62,14 @@ app.get('/getPlaylists', async (req, res) => {
 })
 
 app.get('/smartshuffle', async (req, res) => {
+
+	let headers = {
+		'Authorization' : 'Bearer ' + req.query.token,
+		// 'Authorization': authToken,
+		'Content-Type': 'application/json',
+		'Content-Length': '0'
+	}
+
 	let trackIds = []
 	let trackIdsWithVars = []
 
@@ -85,14 +93,6 @@ app.get('/smartshuffle', async (req, res) => {
 	// const playlistId = req.query.playlistId
 	const playlistId = '4KK6ZMTlEeJ3B5A68YfU7V';
 	let request = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
-
-	let headers = 
-  	{
-		// 'Authorization' : 'Bearer ' + req.query.token,
-		'Authorization': authToken,
-      	'Content-Type': 'application/json',
-      	'Content-Length': '0'
-	}
 	
 	await fetch(request, {method: 'GET', headers: headers}).then(response => response.json())
 	.then(async (data) => {
@@ -114,6 +114,45 @@ app.get('/smartshuffle', async (req, res) => {
 		console.log(err);
 	})
 })
+
+app.get('/mergePlaylists', async (req, res) => {
+
+	let headers = {
+		'Authorization' : 'Bearer ' + req.query.token,
+		// 'Authorization': authToken,
+		'Content-Type': 'application/json',
+		'Content-Length': '0'
+	}
+	
+	let playlistsToMerge = ["3wda1hegnus9iiw3lldj7lga6", "3KWLpSp2FWi5xkJHTM1nfy"]
+	// let name = req.query.name
+	let name = "New Merged Playlist"
+	let playlist = ""
+	let tracks = []
+	for (id in playlistsToMerge) {
+		playlist = playlistsToMerge[id]
+		tracks = await getTracksFromPlaylist(playlist)
+		// let tracks = await getTracksFromPlaylist(playlist)
+	}
+	console.log(tracks)
+})
+
+async function getTracksFromPlaylist(playlistId) {
+
+	let request = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
+	let trackIds = []
+
+	await fetch(request, {method: 'GET', headers: headers}).then(response => response.json())
+	.then(async (data) => {
+		let items = data["items"];
+		let trackIds = playlist.getTrackIdsFromPlaylist(items);
+		// console.log(trackIds)
+		return trackIds;
+	})
+	.catch((err) => {
+		console.log(err);
+	})
+}
 
 async function appendAudioFeatures(trackIds, sortingParams, headers) {
 	let trackIdsWithVars = []
