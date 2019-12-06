@@ -1,14 +1,14 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Data from './Data.js';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          AYOOOO welcome to our data visualization site! 
         </p>
         <a
           className="App-link"
@@ -16,8 +16,12 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          See more 
         </a>
+        <Data />
+        <p>
+          blah blah
+        </p>
       </header>
     </div>
   );
