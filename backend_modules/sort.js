@@ -65,4 +65,15 @@ module.exports = {
         }
         return trackScoreObject
     },
+
+    addNameAndArtist: function (sortedTracks) {
+        let tracksAndNameAndArtists = []
+        let trackId = ""
+        let name = ""
+        let artist = ""
+        for (track in sortedTracks) {
+            trackId = sortedTracks[track]
+            
+        }
+    }
 }

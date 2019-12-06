@@ -9,7 +9,7 @@ const playlist_response = require('./sample_response.js')
 const sort = require('./backend_modules/sort.js')
 const playlist = require('./backend_modules/playlist.js')
 
-const {spBaseUrl, port, sortParams, authToken} = require('./config');
+const {port, sortParams, authToken} = require('./config');
 
 const sortingParams = sortParams.split(' ')
 
@@ -38,7 +38,6 @@ app.get('/getPlaylists', async (req, res) => {
 	   .then(res => res.json())
 	   .then(data => {
 	      let response = []; 
-	      //console.log("DATA: ", data); 
 		  let tracks = data.items; 
 		  for(let i = 0; i < tracks.length; i++){
 		  	let trackData = {}
@@ -47,11 +46,7 @@ app.get('/getPlaylists', async (req, res) => {
 		  	trackData.images = tracks[i].images; 
 		  	response.push(trackData); 
   		}
-	   
-	   
  		res.send(response);
-
-//	      console.log(data); 
 	   })
 	   .catch(err => {
 	      res.send(err);
@@ -73,6 +68,12 @@ app.get('/smartshuffle', async (req, res) => {
 	let trackIds = []
 	let trackIdsWithVars = []
 
+	let playlist1 = req.query.playlistId1 || 0
+	let playlist2 = req.query.playlistId2 || 0
+	let playlist3 = req.query.playlistId3 || 0
+
+	let playlists = playlist.getAllPlaylists(playlist1, playlist2, playlist3)
+
 	//Accumulating all the weights
 	let tempoWeight = req.query.tempo || 0
 	let danceWeight = req.query.danceability || 0
@@ -87,71 +88,51 @@ app.get('/smartshuffle', async (req, res) => {
 
 	//Get peak from request
 	let peak = req.query.peak
-	let length = 0
-	let peakElement = 0
 
-	// const playlistId = req.query.playlistId
-	const playlistId = '4KK6ZMTlEeJ3B5A68YfU7V';
-	let request = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
-	
-	await fetch(request, {method: 'GET', headers: headers}).then(response => response.json())
-	.then(async (data) => {
-		let items = data["items"];
-		trackIds = playlist.getTrackIdsFromPlaylist(items);
-		length = trackIds.length
+	for (id in playlists) {
+		let currPlaylist = playlists[id]
+		let request = "https://api.spotify.com/v1/playlists/" + currPlaylist + "/tracks"
+		await fetch(request, {method: 'GET', headers: headers}).then(response => response.json())
+		.then((data) => {
+			let items = data["items"]
+			trackIds.push(playlist.getTrackIdsFromPlaylist(items))
+		})
+	}
+	trackIds = Array.prototype.concat.apply([], trackIds)
+	let length = trackIds.length
+	console.log(length)
 
-		trackIdsWithVars = await appendAudioFeatures(trackIds, sortingParams, headers);
-		trackIdsWithWeights = sort.calculateTotalScore(trackIdsWithVars, weights)
-		trackScoreObject = sort.createTrackScoreObject(trackIdsWithWeights)
+	trackIdsWithVars = await appendAudioFeatures(trackIds, sortingParams, headers)
+	trackIdsWithWeights = sort.calculateTotalScore(trackIdsWithVars, weights)
+	trackScoreObject = sort.createTrackScoreObject(trackIdsWithWeights)
 
-		//Sort tracks normally, and then sort around a peak
-		peakElement = Math.round(peak * length)
-		let sorted_tracks = sort.sort(trackIdsWithWeights, 1);
-		let peakSortedTracks = sort.peakSort(peakElement, length, sorted_tracks);
+	let peakElement = Math.round(peak * length)
+	let sorted_tracks = sort.sort(trackIdsWithWeights, 1)
+	let peakSortedTracks = sort.peakSort(peakElement, length, sorted_tracks)
 
-		res.send(JSON.stringify(peakSortedTracks));
-	}).catch((err) => {
-		console.log(err);
-	})
+	let sortedTracksNamesArtists = await addNameAndArtists(peakSortedTracks, headers);
+	res.send(JSON.stringify(sortedTracksNamesArtists));
 })
 
-app.get('/mergePlaylists', async (req, res) => {
-
-	let headers = {
-		'Authorization' : 'Bearer ' + req.query.token,
-		// 'Authorization': authToken,
-		'Content-Type': 'application/json',
-		'Content-Length': '0'
-	}
-
-	let playlistsToMerge = ["3wda1hegnus9iiw3lldj7lga6", "3KWLpSp2FWi5xkJHTM1nfy"]
-	// let name = req.query.name
-	let name = "New Merged Playlist"
-	let playlist = ""
-	let tracks = []
-	for (id in playlistsToMerge) {
-		playlist = playlistsToMerge[id]
-		tracks = await getTracksFromPlaylist(playlist)
-		// let tracks = await getTracksFromPlaylist(playlist)
-	}
-	console.log(tracks)
-})
-
-async function getTracksFromPlaylist(playlistId) {
-
-	let request = "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks";
-	let trackIds = []
-
-	await fetch(request, {method: 'GET', headers: headers}).then(response => response.json())
-	.then(async (data) => {
-		let items = data["items"];
-		let trackIds = playlist.getTrackIdsFromPlaylist(items);
-		// console.log(trackIds)
-		return trackIds;
-	})
-	.catch((err) => {
-		console.log(err);
-	})
+async function addNameAndArtists(sortedTracks, headers) {
+	let tracksAndNameAndArtists = []
+        let trackId = ""
+        let name = ""
+        let artist = ""
+        let request = ""
+        for (track in sortedTracks) {
+            trackId = sortedTracks[track]
+            request = "https://api.spotify.com/v1/tracks/" + trackId
+			await fetch (request, {method: 'GET', headers: headers}).then(response => response.json())
+			.then((data) => {
+				name = data["name"]
+				artist = data["album"]["artists"][0]["name"]
+				tracksAndNameAndArtists.push([trackId, name, artist])
+			}).catch((err) => {
+				console.log(err)
+			})
+		}
+		return tracksAndNameAndArtists
 }
 
 async function appendAudioFeatures(trackIds, sortingParams, headers) {
@@ -190,3 +171,8 @@ function normalize(val, min, max) {
 app.listen(port || 3200, () => {
 	console.log(`Server is listening on port ${port}`);
 })
+
+
+//SmartShuffle - need to return song id, name of song, and artist in list of lists
+//Merge Playlist enabled for 1-3 playlists in the smartShuffle endpoint
+//Hence, you can delete the merge playlist endpoint and just work with what you have
