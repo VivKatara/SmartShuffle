@@ -217,12 +217,12 @@ app.get('/smartshuffle', async (req, res) => {
 	let numNewSongs = admin.firestore.FieldValue.increment(length);
 
 	//init 
-					for(var i = 1900; i < 2020; i++){
-					console.log("setting year for ", i); 
-					let setYear = metadataRef.doc('decades').set({
-						[i]: 0,
-					})
-				}
+				// 	for(var i = 1900; i < 2020; i++){
+				// 	console.log("setting year for ", i); 
+				// 	let setYear = metadataRef.doc('decades').set({
+				// 		[i]: 0,
+				// 	})
+				// }
 
 	let setPlaylist = metadataRef.doc('stats').update({
 		playlistcount: increment,
@@ -264,6 +264,7 @@ async function addNameAndArtists(sortedTracks, headers) {
 				let popularity = admin.firestore.FieldValue.increment(data["popularity"] || 0);
 				let duration = admin.firestore.FieldValue.increment(data["duration_ms"] || 0); 
 				let release_year = data["album"]["release_date"] || 0;  
+				release_year = release_year.substring(0, 4); 
 				let setMetadata = metadataRef.doc('stats').update({
 					popularity: popularity,
 					songminutes: duration,
