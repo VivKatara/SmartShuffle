@@ -19,6 +19,7 @@ admin.initializeApp({
 });
 
 let db = admin.firestore();
+var nonce = 0; 
 
 //some firebase collections for songs, playlists, songtime, etc. 
 let trackRef = db.collection('tracks'); 
@@ -51,7 +52,7 @@ app.get('/getPlaylists', async (req, res) => {
 
 	let headers = 
 	  {
-	    	'Authorization' : "Bearer BQBZNMkUKcPBSexCn0hYPriEpgjLMwMO26G1LseYltk3mKK4fVbaNtC3hGLad-Q1tgZvwwc_xICR4SLiRBwn_bJFeq-vxhlMGGZGvkwS-pHk00bz_K1R4aJjbbk88OB4irQwY7Al3D7nqzZP5aQbsKtafNYd_phlGY5ndZqTuMGvcPPhOjB8YdIdKD0UmJURNUmmLoycRg",
+	    	'Authorization' : "Bearer ",
 	    	//req.query.token,
 	      'Content-Type': 'application/json',
 	      'Content-Length': '0'
@@ -73,7 +74,9 @@ app.get('/getPlaylists', async (req, res) => {
   }
 
 	console.log("data is: ", data); 
-   let setPlaylist = playlistRef.doc('playlist1').set({
+
+	nonce ++; 
+   let setPlaylist = playlistRef.doc(nonce).set({
 	  list: response 
 	});
    	
