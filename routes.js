@@ -51,11 +51,9 @@ app.get('/getPlaylists', async (req, res) => {
 
 	let headers = 
 	  {
-	    	'Authorization' : "Bearer BQBZNMkUKcPBSexCn0hYPriEpgjLMwMO26G1LseYltk3mKK4fVbaNtC3hGLad-Q1tgZvwwc_xICR4SLiRBwn_bJFeq-vxhlMGGZGvkwS-pHk00bz_K1R4aJjbbk88OB4irQwY7Al3D7nqzZP5aQbsKtafNYd_phlGY5ndZqTuMGvcPPhOjB8YdIdKD0UmJURNUmmLoycRg",
-	    	//req.query.token,
+	    	'Authorization' : "Bearer " + req.query.token,
 	      'Content-Type': 'application/json',
 	      'Content-Length': '0'
-	      // 'Content-Type': 'application/x-www-form-urlencoded',
 	}
 
    await fetch(request, { 'headers': headers})
