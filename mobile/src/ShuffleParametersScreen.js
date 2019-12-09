@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Alert, Platform, StyleSheet, Text, View, SafeAreaView, Picker, TouchableOpacity } from 'react-native';
+import { Alert, Platform, StyleSheet, Text, View, SafeAreaView, Picker, TouchableOpacity, TouchableHighlight } from 'react-native';
 import { Dropdown } from 'react-native-material-dropdown';
 import { NavigationEvents } from 'react-navigation';
 import { ActivityIndicator } from 'react-native-paper';
 import { Slider } from 'react-native-elements';
+import Spotify from 'rn-spotify-sdk';
 
 
 
@@ -20,6 +21,7 @@ export default class ShuffleParametersScreen extends Component {
       genreName: "",
       showSpinner: false,
     }
+    this.spotifyLogoutButtonWasPressed = this.spotifyLogoutButtonWasPressed.bind(this);
   }
 
   componentWillMount () {
@@ -41,17 +43,32 @@ export default class ShuffleParametersScreen extends Component {
     }
   }
 
-  async getSortedPlaylist = () => {
+  getSortedPlaylist = async () => {
     let request = "https://localhost:3000/smartshuffle?"
       +"tempo=" + this.state.tempo
       + "&danceability=" + this.state.danceability
       + "&instrumentalness=" + this.state.instrumentalness
+<<<<<<< HEAD
       + "&energy=" + this.state.energy; 
+=======
+      + "&energy=" + this.state.energy;
+>>>>>>> 22ed06722a60925b5b5105547022c2e363aa8f16
 
-      const response = await fetch(request); 
-      console.log(response); 
+      const response = await fetch(request);
+      console.log(response);
+
+      // TODO: pass to player screen
+  }
 
 
+  spotifyLogoutButtonWasPressed() {
+      Spotify.logout().finally(() => {
+          this.goToInitialScreen();
+      });
+  }
+
+  goToInitialScreen() {
+      this.props.navigation.navigate('initial');
   }
 
 
@@ -91,28 +108,37 @@ export default class ShuffleParametersScreen extends Component {
             <Dropdown label='Genre' onChangeText={(itemValue, itemIndex) => this.categoryValueChange(itemValue)} data={this.state.pickerItems}/>
             <View style={{paddingLeft: 6, height:30, alignSelf:"stretch", justifyContent:"space-around"}}></View>
         </View>
-        <View style={{flex: 70, alignSelf:"stretch", justifyContent:"center", alignItems: "center"}}>
-          <TouchableOpacity  style={styles.submitButton} disabled={!(this.state.genreName !== "")} onPress={() => {
-              this.setState({
-                showSpinner: true,
-            });
+        <View style={{ flex: 70, alignSelf: "stretch", justifyContent: "center", alignItems: "center" }}>
+            <View style={{flex: 50, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
+                <TouchableOpacity  style={styles.submitButton} disabled={!(this.state.genreName !== "")} onPress={() => {
+                    this.setState({
+                        showSpinner: true,
+                    });
 
-            this.getSortedPlaylist()
-            let ok = setTimeout(() => {
-                this.setState({
-                  showSpinner: false,
-              });
+                    this.getSortedPlaylist()
+                    let ok = setTimeout(() => {
+                        this.setState({
+                        showSpinner: false,
+                    });
 
 
-              // console.log("got the sorted playlist");
-            this.props.navigation.navigate("player");
+                    // console.log("got the sorted playlist");
+                    this.props.navigation.navigate("player");
 
-            }, 5000);
-            }}>
-            <View style={{flex: 1, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
-              <Text style = {styles.buttontext}>SHUFFLE</Text>
+                    }, 5000);
+                }}>
+                <View style={{flex: 1, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style = {styles.buttontext}>SHUFFLE</Text>
+                </View>
+              </TouchableOpacity>
             </View>
-          </TouchableOpacity>
+            <View style={{flex: 1, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
+            </View>
+            <View style={{flex: 50, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
+                <TouchableHighlight onPress={this.spotifyLogoutButtonWasPressed}>
+                    <Text>Logout</Text>
+                </TouchableHighlight>
+            </View>
         </View>
       </View>
     );
