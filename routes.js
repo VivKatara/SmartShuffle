@@ -74,7 +74,6 @@ app.get('/getPlaylists', async (req, res) => {
 	res.send(err);
 })
 
-//   console.log("data is: ", data); 
 //    let setPlaylist = playlistRef.doc('playlist1').set({
 // 	  list: response 
 // 	});
