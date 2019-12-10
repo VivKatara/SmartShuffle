@@ -29,8 +29,7 @@ let metadataRef = db.collection('metadata');
 const sort = require('./backend_modules/sort.js')
 const playlist = require('./backend_modules/playlist.js')
 
-const PORT = 3000;
-const sortParams = "tempo danceability energy instrumentalness liveness loudness speechiness valence acousticness"
+const {port, sortParams} = require('./config');
 const sortingParams = sortParams.split(' ')
 
 // Require the framework and instantiate it
@@ -55,7 +54,7 @@ app.get('/getPlaylists', async (req, res) => {
 	}
 
    await fetch(request, { 'headers': headers})
-	.then(res => res.json())
+   .then(res => res.json())
    .then(data => {
       let response = []; 
 	  let tracks = data.items; 
@@ -65,7 +64,7 @@ app.get('/getPlaylists', async (req, res) => {
 		  trackData.name = tracks[i].name; 
 		  trackData.images = tracks[i].images; 
 		  response.push(trackData); 
-  	 }
+  }
 
 	for(var i = 0; i < response.length; i++) {
 		let setPlaylist = playlistRef.doc().set({
@@ -236,6 +235,6 @@ function normalize(val, min, max) {
 }
 
 // start server
-app.listen(PORT, () => {
-	console.log(`Server is listening on port ` + PORT);
+app.listen(port || 3200, () => {
+	console.log(`Server is listening on port ${port}`);
 })
