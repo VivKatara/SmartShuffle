@@ -12,7 +12,7 @@ export default class ShuffleParametersScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      playlistObject: this.props.navigation.getParam("playlist", {}),
+      playlistObject: this.props.navigation.getParam("playlist", []),
       tempo: 0.5,
       energy: 0.5,
       danceability: 0.5,
@@ -24,7 +24,7 @@ export default class ShuffleParametersScreen extends Component {
     this.spotifyLogoutButtonWasPressed = this.spotifyLogoutButtonWasPressed.bind(this);
   }
 
-  componentWillMount () {
+  componentDidMount () {
       let items = ["Indie/Alternative", "Electro-Pop", "Rap", "Hip Hop", "Deep Haus", "R&B", "Soul", "Rock"];
       let pickerItems = items.map((a, i) => {
         return {value: items[i]}
@@ -45,18 +45,23 @@ export default class ShuffleParametersScreen extends Component {
 
   getSortedPlaylist = async () => {
     let request = "https://frightful-barrow-37052.herokuapp.com/smartshuffle?"
-      + "tempo=" + this.state.tempo
-      + "&danceability=" + this.state.danceability
-      + "&loudness=" + this.state.instrumentalness
-      + "&peak=" + this.state.energy
-      + "&token=" + "BQAbXo6mvZz-RqP7RXcSk7WEUe2zxApUwN2gZvgmhWSLiE5o6vPsXixY9xVf5witUncu37yM9ehnGv4GgirjI9eqT8d6V5m58JuKqcyDIMlSRHtdDnXg3BhOca4MLsRVHRAG5K4YomGpv6qrDGxRFb2E7xWOIFXqoGl4PMdvnEQMBCCJQACJhdpHzcYiGpqku4mQLYC78w";
+      + "tempo=" + this.state.tempo * 10
+      + "&danceability=" + this.state.danceability * 10
+      + "&loudness=" + this.state.instrumentalness * 10
+      + "&peak=" + this.state.energy * 10
+      + "&playlistId1=" + this.state.playlistObject[0].id
+      + "&playlistId2=" + this.state.playlistObject[1].id
+      + "&playlistId3=" + this.state.playlistObject[2].id
+      + "&token=" + global.accessToken;//"BQAbXo6mvZz-RqP7RXcSk7WEUe2zxApUwN2gZvgmhWSLiE5o6vPsXixY9xVf5witUncu37yM9ehnGv4GgirjI9eqT8d6V5m58JuKqcyDIMlSRHtdDnXg3BhOca4MLsRVHRAG5K4YomGpv6qrDGxRFb2E7xWOIFXqoGl4PMdvnEQMBCCJQACJhdpHzcYiGpqku4mQLYC78w";
 
+
+      this.setState({ showSpinner: true});
       const response = await fetch(request);
       const songs = await response.json();
-      console.log(songs);
-      this.props.navigation.navigate('player', { songIDs: songs });
 
-      // TODO: pass to player screen
+      console.log(songs);
+      this.setState({ showSpinner: false});
+      this.props.navigation.navigate('player', { songIDs: songs });
   }
 
 
@@ -75,7 +80,7 @@ export default class ShuffleParametersScreen extends Component {
     return (
       <View style={styles.container}>
         <View style={{flex: 50, alignSelf:"stretch", justifyContent:"center"}}>
-          <Text style={styles.maintenanceForm}>Shuffle Parameters:  {this.state.playlistObject.name}</Text>
+          <Text style={styles.maintenanceForm}>Shuffle Parameters: </Text>
         </View>
         <View style={{paddingLeft: 6, flex: 180, alignSelf:"stretch", justifyContent:"space-around"}}>
             <Text>Tempo: {this.state.tempo}</Text>
@@ -109,23 +114,7 @@ export default class ShuffleParametersScreen extends Component {
         </View>
         <View style={{ flex: 70, alignSelf: "stretch", justifyContent: "center", alignItems: "center" }}>
             <View style={{flex: 50, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
-                <TouchableOpacity  style={styles.submitButton} disabled={!(this.state.genreName !== "")} onPress={() => {
-                    this.setState({
-                        showSpinner: true,
-                    });
-
-                    this.getSortedPlaylist()
-                    let ok = setTimeout(() => {
-                        this.setState({
-                        showSpinner: false,
-                    });
-
-
-                    // console.log("got the sorted playlist");
-                    this.props.navigation.navigate("player");
-
-                }, 1000);
-                }}>
+                <TouchableOpacity  style={styles.submitButton} disabled={!(this.state.genreName !== "")} onPress={this.getSortedPlaylist}>
                 <View style={{flex: 1, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
                     <Text style = {styles.buttontext}>SHUFFLE</Text>
                 </View>

@@ -9,6 +9,8 @@ export default class PlaylistsScreen extends Component {
     super(props);
     this.state = {
       playlistName: "",
+      playlistName2: "",
+      playlistName3: "",
       playlists: this.props.navigation.getParam("playlists", []),
       playlistIdDictionary: {},
       pickerItems: [],
@@ -36,7 +38,7 @@ export default class PlaylistsScreen extends Component {
 
   selectPlaylist = () => {
     // Get playlist ID given name and pass both to next screen as an object
-    let object = { "id": this.state.playlistIdDictionary[this.state.playlistName], "name": this.state.playlistName }
+    let object = [{ "id": this.state.playlistIdDictionary[this.state.playlistName], "name": this.state.playlistName }, { "id": this.state.playlistName2 == "" ? 0 : this.state.playlistIdDictionary[this.state.playlistName2], "name": this.state.playlistName2 }, { "id": this.state.playlistName3 == "" ? 0 : this.state.playlistIdDictionary[this.state.playlistName3], "name": this.state.playlistName3 }]
     this.setState({
       playlistObject: object,
     })
@@ -48,9 +50,17 @@ export default class PlaylistsScreen extends Component {
 
 
 
-  categoryValueChange = itemValue => {
+  categoryValueChange = (pnumber, itemValue) => {
     if (itemValue !== "") {
-      this.setState({ playlistName: itemValue });
+        if (pnumber == 1) {
+            this.setState({ playlistName: itemValue });
+        }
+        if (pnumber == 2) {
+            this.setState({ playlistName2: itemValue });
+        }
+        if (pnumber == 3) {
+            this.setState({ playlistName3: itemValue });
+        }
     }
   }
 
@@ -69,10 +79,15 @@ export default class PlaylistsScreen extends Component {
     return (
       <View style={styles.container}>
         <View style={{ flex: 50, alignSelf: "stretch", justifyContent: "flex-end" }}>
-          <Text style={styles.maintenanceForm}>Select Playlist</Text>
+          <Text style={styles.maintenanceForm}>Select Playlists</Text>
         </View>
         <View style={{ paddingLeft: 6, flex: 162, alignSelf: "stretch", justifyContent: "space-around" }}>
-          <Dropdown label='Playlist' onChangeText={(itemValue, itemIndex) => this.categoryValueChange(itemValue)} data={this.state.pickerItems} />
+          <View style={{height:100}}></View>
+          <Dropdown label='Playlist 1' onChangeText={(itemValue, itemIndex) => this.categoryValueChange(1, itemValue)} data={this.state.pickerItems} />
+          <View style={{height:130}}></View>
+          <Dropdown label='Playlist 2' onChangeText={(itemValue, itemIndex) => this.categoryValueChange(2, itemValue)} disabled={this.state.playlistName == ""} data={this.state.pickerItems} />
+          <View style={{height:130}}></View>
+          <Dropdown label='Playlist 3' onChangeText={(itemValue, itemIndex) => this.categoryValueChange(3, itemValue)} disabled={this.state.playlistName2 == ""} data={this.state.pickerItems} />
         </View>
         <View style={{ flex: 210, alignSelf: "stretch", justifyContent: "flex-start" }}></View>
         <View style={{ flex: 150, alignSelf: "stretch", justifyContent: "center", alignItems: "center" }}>

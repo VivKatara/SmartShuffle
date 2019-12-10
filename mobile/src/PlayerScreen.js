@@ -22,7 +22,7 @@ export default class PlayerScreen extends PureComponent {
 
 		this.state = {
 			spotifyUserName: null,
-			songIDs: this.props.navigation.getParam("songIDs", []),
+			songIDs: this.props.navigation.getParam("songIDs", ["song1","song2","song3"]),
 		};
 
 		this.spotifyLogoutButtonWasPressed = this.spotifyLogoutButtonWasPressed.bind(this);
@@ -59,8 +59,9 @@ export default class PlayerScreen extends PureComponent {
 		for (const [index, value] of songNames.entries()) {
 			songs.push(
 				<TouchableOpacity key={index} style={styles.rectangle} onPress={this.spotifyLogoutButtonWasPressed}>
-					<View style={{flex:1, marginLeft:"5%", justifyContent: 'center', alignItems: 'flex-start'}}>
-						<Text style={styles.title}>{value}</Text>
+					<View style={{flex:1, marginLeft:"5%", justifyContent: 'center', alignItems: 'center'}}>
+						<Text style={styles.title}>{value[1]}</Text>
+						<Text style={styles.artist}>{value[2]}</Text>
 					</View>
 				</TouchableOpacity>
 			)
@@ -116,6 +117,10 @@ const styles = StyleSheet.create({
    },
    title: {
 	   fontSize:20,
+	   color:"#1DB954",
+   },
+   artist: {
+	   fontSize:13,
 	   color:"#1DB954",
    }
 });
