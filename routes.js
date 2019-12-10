@@ -52,7 +52,7 @@ app.get('/getPlaylists', async (req, res) => {
 
 	let headers = 
 	  {
-	    	'Authorization' : "Bearer ",
+	    	'Authorization' : "Bearer BQApiu4lVDyFOBHwghJq684U3q4eX-n8J0FMb-LqjV-n4iRhwb8eFrwkTi4KxZfc7R9dSZA3-UXF-CgE3MsEUcB8GZfSYFUfTW4jVzT9qlo9TsCsml_Dr3K4e7FCe8t2WGQELq2LdNaJxJsO2lXLJVFZ4B9bB-jcv0Q0kU1ytPO5SB_l0h4geGD56PlgT1x9LzuVHExJQg",
 	    	//req.query.token,
 	      'Content-Type': 'application/json',
 	      'Content-Length': '0'
@@ -73,19 +73,24 @@ app.get('/getPlaylists', async (req, res) => {
   response.push(trackData); 
   }
 
-	console.log("data is: ", data); 
-
-	nonce ++; 
-   let setPlaylist = playlistRef.doc(nonce).set({
-	  list: response 
+	for(var i = 0; i < response.length; i++) {
+		let setPlaylist = playlistRef.doc().set({
+	  	list: response[i], 
 	});
-   	
-   	console.log(data);
+	}
+	
+	console.log("data is: ", response); 
 	res.send(response);
 
+	nonce ++; 
+   
+   	
+   	console.log(nonce, setPlaylist);
+	
+
    
    
- res.send(response);
+ //res.send(response);
 
 //      console.log(data); 
    })
