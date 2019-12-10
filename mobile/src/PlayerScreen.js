@@ -22,7 +22,9 @@ export default class PlayerScreen extends PureComponent {
 
 		this.state = {
 			spotifyUserName: null,
-			songIDs: this.props.navigation.getParam("songIDs", []),
+			songIDs: ["0PkpRtJqrwuXhbdtJuQm7E", "2YodwKJnbPyNKe8XXSE9V7"], //this.props.navigation.getParam("songIDs", []),
+
+			currentSongIndex: 0,
 		};
 
 		this.spotifyLogoutButtonWasPressed = this.spotifyLogoutButtonWasPressed.bind(this);
@@ -34,13 +36,17 @@ export default class PlayerScreen extends PureComponent {
 			// update state with user info
 			this.setState({ spotifyUserName: result.display_name });
 			// play song
-			return Spotify.playURI("spotify:track:2zk7TQx9Xa4yxYmsjgDCPp", 0, 0);
-		}).then(() => {
-			// success
-		}).catch((error) => {
-			// error
-			Alert.alert("Error", error.message);
+			Spotify.addListener('audioDeliveryDone', () => {
+				this.playSong(this.state.currentSongIndex + 1)
+			});
+
 		});
+	}
+
+	playSong(index) {
+		this.setState({ currentSongIndex: index });
+		Spotify.playURI("spotify:track:" + this.state.songIDs[this.state.currentSongIndex], 0, 0)
+			.then(() => { console.log('PLAYING') }).catch((error) => { Alert.alert('error', error); });
 	}
 
 	goToInitialScreen() {
@@ -58,8 +64,8 @@ export default class PlayerScreen extends PureComponent {
 		const songs = []
 		for (const [index, value] of songNames.entries()) {
 			songs.push(
-				<TouchableOpacity key={index} style={styles.rectangle} onPress={this.spotifyLogoutButtonWasPressed}>
-					<View style={{flex:1, marginLeft:"5%", justifyContent: 'center', alignItems: 'flex-start'}}>
+				<TouchableOpacity key={index} style={styles.rectangle} onPress={() => { this.playSong(index) }}>
+					<View style={{ flex: 1, marginLeft: "5%", justifyContent: 'center', alignItems: 'flex-start' }}>
 						<Text style={styles.title}>{value}</Text>
 					</View>
 				</TouchableOpacity>
@@ -67,18 +73,18 @@ export default class PlayerScreen extends PureComponent {
 		}
 
 		return (
-		<View style={styles.container}>
-			<View style={{height:40, justifyContent: 'center', alignItems: 'center'}}>
+			<View style={styles.container}>
+				<View style={{ height: 40, justifyContent: 'center', alignItems: 'center' }}>
+				</View>
+				<ScrollView style={{ flex: 9, alignSelf: 'stretch' }} contentInsetAdjustmentBehavior="automatic">
+					{songs}
+				</ScrollView>
+				<View style={{ height: 70, justifyContent: 'center', alignItems: 'center' }}>
+					<TouchableHighlight onPress={this.spotifyLogoutButtonWasPressed}>
+						<Text>Logout</Text>
+					</TouchableHighlight>
+				</View>
 			</View>
-			<ScrollView style={{flex:9, alignSelf:'stretch'}} contentInsetAdjustmentBehavior="automatic">
-				{songs}
-			</ScrollView>
-			<View style={{height:70, justifyContent: 'center', alignItems: 'center'}}>
-                <TouchableHighlight onPress={this.spotifyLogoutButtonWasPressed}>
-                    <Text>Logout</Text>
-                </TouchableHighlight>
-            </View>
-		</View>
 		);
 	}
 }
@@ -89,7 +95,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		alignSelf:'stretch',
+		alignSelf: 'stretch',
 		backgroundColor: '#F5FCFF',
 	},
 	greeting: {
@@ -98,24 +104,24 @@ const styles = StyleSheet.create({
 		margin: 10,
 	},
 	rectangle: {
-      elevation: 5,
-      marginLeft: "5.56%",
-      marginTop: "1.39%",
-      marginBottom: "1.39%",
-      width: "88.89%",
-      height: 80,
-      borderRadius: 8,
-      backgroundColor: "#fff",
-      shadowColor: "#a2aabc",
-      shadowOffset: {
-        width: 0,
-        height: -1
-      },
-      shadowRadius: 6,
-      shadowOpacity: 1,
-   },
-   title: {
-	   fontSize:20,
-	   color:"#1DB954",
-   }
+		elevation: 5,
+		marginLeft: "5.56%",
+		marginTop: "1.39%",
+		marginBottom: "1.39%",
+		width: "88.89%",
+		height: 80,
+		borderRadius: 8,
+		backgroundColor: "#fff",
+		shadowColor: "#a2aabc",
+		shadowOffset: {
+			width: 0,
+			height: -1
+		},
+		shadowRadius: 6,
+		shadowOpacity: 1,
+	},
+	title: {
+		fontSize: 20,
+		color: "#1DB954",
+	}
 });

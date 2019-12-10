@@ -24,16 +24,16 @@ export default class ShuffleParametersScreen extends Component {
     this.spotifyLogoutButtonWasPressed = this.spotifyLogoutButtonWasPressed.bind(this);
   }
 
-  componentWillMount () {
-      let items = ["Indie/Alternative", "Electro-Pop", "Rap", "Hip Hop", "Deep Haus", "R&B", "Soul", "Rock"];
-      let pickerItems = items.map((a, i) => {
-        return {value: items[i]}
-      })
-      console.log("PICKER ITEMS!!!!", pickerItems)
-      this.setState({
-        pickerItems: pickerItems,
-      })
-      console.log(this.state.playlistObject)
+  componentWillMount() {
+    let items = ["Indie/Alternative", "Electro-Pop", "Rap", "Hip Hop", "Deep Haus", "R&B", "Soul", "Rock"];
+    let pickerItems = items.map((a, i) => {
+      return { value: items[i] }
+    })
+    console.log("PICKER ITEMS!!!!", pickerItems)
+    this.setState({
+      pickerItems: pickerItems,
+    })
+    console.log(this.state.playlistObject)
   }
 
 
@@ -51,93 +51,93 @@ export default class ShuffleParametersScreen extends Component {
       + "&peak=" + this.state.energy
       + "&token=" + "BQAbXo6mvZz-RqP7RXcSk7WEUe2zxApUwN2gZvgmhWSLiE5o6vPsXixY9xVf5witUncu37yM9ehnGv4GgirjI9eqT8d6V5m58JuKqcyDIMlSRHtdDnXg3BhOca4MLsRVHRAG5K4YomGpv6qrDGxRFb2E7xWOIFXqoGl4PMdvnEQMBCCJQACJhdpHzcYiGpqku4mQLYC78w";
 
-      const response = await fetch(request);
-      const songs = await response.json();
-      console.log(songs);
-      this.props.navigation.navigate('player', { songIDs: songs });
+    const response = await fetch(request);
+    const songs = await response.json();
+    console.log(songs);
+    this.props.navigation.navigate('player', { songIDs: [] });
 
-      // TODO: pass to player screen
+    // TODO: pass to player screen
   }
 
 
   spotifyLogoutButtonWasPressed() {
-      Spotify.logout().finally(() => {
-          this.goToInitialScreen();
-      });
+    Spotify.logout().finally(() => {
+      this.goToInitialScreen();
+    });
   }
 
   goToInitialScreen() {
-      this.props.navigation.navigate('initial');
+    this.props.navigation.navigate('initial');
   }
 
 
   render() {
     return (
       <View style={styles.container}>
-        <View style={{flex: 50, alignSelf:"stretch", justifyContent:"center"}}>
+        <View style={{ flex: 50, alignSelf: "stretch", justifyContent: "center" }}>
           <Text style={styles.maintenanceForm}>Shuffle Parameters:  {this.state.playlistObject.name}</Text>
         </View>
-        <View style={{paddingLeft: 6, flex: 180, alignSelf:"stretch", justifyContent:"space-around"}}>
-            <Text>Tempo: {this.state.tempo}</Text>
-            <Slider
-                thumbTintColor= "#1DB954"
-                value={Math.round( this.state.tempo * 100 ) / 100}
-                onValueChange={tempo => this.setState({ tempo: Math.round( tempo * 100 ) / 100 })}
-            />
-            <Text>Energy: {this.state.energy}</Text>
-            <Slider
-                thumbTintColor= "#1DB954"
-                value={Math.round( this.state.energy * 100 ) / 100}
-                onValueChange={energy => this.setState({ energy: Math.round( energy * 100 ) / 100 })}
-            />
+        <View style={{ paddingLeft: 6, flex: 180, alignSelf: "stretch", justifyContent: "space-around" }}>
+          <Text>Tempo: {this.state.tempo}</Text>
+          <Slider
+            thumbTintColor="#1DB954"
+            value={Math.round(this.state.tempo * 100) / 100}
+            onValueChange={tempo => this.setState({ tempo: Math.round(tempo * 100) / 100 })}
+          />
+          <Text>Energy: {this.state.energy}</Text>
+          <Slider
+            thumbTintColor="#1DB954"
+            value={Math.round(this.state.energy * 100) / 100}
+            onValueChange={energy => this.setState({ energy: Math.round(energy * 100) / 100 })}
+          />
 
-            <ActivityIndicator style={{paddingBottom:30, flex: 1, justifyContent: 'center'  }} size={76} color="#1DB954" animating={this.state.showSpinner}/>
-            <Text>Danceability: {this.state.danceability}</Text>
-            <Slider
-                thumbTintColor= "#1DB954"
-                value={Math.round( this.state.danceability * 100 ) / 100}
-                onValueChange={danceability => this.setState({ danceability: Math.round( danceability * 100 ) / 100 })}
-            />
-            <Text>Instrumentalness: {this.state.instrumentalness}</Text>
-            <Slider
-                thumbTintColor= "#1DB954"
-                value={Math.round( this.state.instrumentalness * 100 ) / 100}
-                onValueChange={instrumentalness => this.setState({ instrumentalness: Math.round( instrumentalness * 100 ) / 100 })}
-            />
-            <Dropdown label='Genre' onChangeText={(itemValue, itemIndex) => this.categoryValueChange(itemValue)} data={this.state.pickerItems}/>
-            <View style={{paddingLeft: 6, height:30, alignSelf:"stretch", justifyContent:"space-around"}}></View>
+          <ActivityIndicator style={{ paddingBottom: 30, flex: 1, justifyContent: 'center' }} size={76} color="#1DB954" animating={this.state.showSpinner} />
+          <Text>Danceability: {this.state.danceability}</Text>
+          <Slider
+            thumbTintColor="#1DB954"
+            value={Math.round(this.state.danceability * 100) / 100}
+            onValueChange={danceability => this.setState({ danceability: Math.round(danceability * 100) / 100 })}
+          />
+          <Text>Instrumentalness: {this.state.instrumentalness}</Text>
+          <Slider
+            thumbTintColor="#1DB954"
+            value={Math.round(this.state.instrumentalness * 100) / 100}
+            onValueChange={instrumentalness => this.setState({ instrumentalness: Math.round(instrumentalness * 100) / 100 })}
+          />
+          <Dropdown label='Genre' onChangeText={(itemValue, itemIndex) => this.categoryValueChange(itemValue)} data={this.state.pickerItems} />
+          <View style={{ paddingLeft: 6, height: 30, alignSelf: "stretch", justifyContent: "space-around" }}></View>
         </View>
         <View style={{ flex: 70, alignSelf: "stretch", justifyContent: "center", alignItems: "center" }}>
-            <View style={{flex: 50, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
-                <TouchableOpacity  style={styles.submitButton} disabled={!(this.state.genreName !== "")} onPress={() => {
-                    this.setState({
-                        showSpinner: true,
-                    });
+          <View style={{ flex: 50, alignSelf: "stretch", justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity style={styles.submitButton} disabled={!(this.state.genreName !== "")} onPress={() => {
+              this.setState({
+                showSpinner: true,
+              });
 
-                    this.getSortedPlaylist()
-                    let ok = setTimeout(() => {
-                        this.setState({
-                        showSpinner: false,
-                    });
+              this.getSortedPlaylist()
+              let ok = setTimeout(() => {
+                this.setState({
+                  showSpinner: false,
+                });
 
 
-                    // console.log("got the sorted playlist");
-                    this.props.navigation.navigate("player");
+                // console.log("got the sorted playlist");
+                this.props.navigation.navigate("player");
 
-                }, 1000);
-                }}>
-                <View style={{flex: 1, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style = {styles.buttontext}>SHUFFLE</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={{flex: 1, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
-            </View>
-            <View style={{flex: 50, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
-                <TouchableHighlight onPress={this.spotifyLogoutButtonWasPressed}>
-                    <Text>Logout</Text>
-                </TouchableHighlight>
-            </View>
+              }, 1000);
+            }}>
+              <View style={{ flex: 1, alignSelf: "stretch", justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={styles.buttontext}>SHUFFLE</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={{ flex: 1, alignSelf: "stretch", justifyContent: 'center', alignItems: 'center' }}>
+          </View>
+          <View style={{ flex: 50, alignSelf: "stretch", justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableHighlight onPress={this.spotifyLogoutButtonWasPressed}>
+              <Text>Logout</Text>
+            </TouchableHighlight>
+          </View>
         </View>
       </View>
     );
