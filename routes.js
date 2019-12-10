@@ -26,13 +26,10 @@ let trackRef = db.collection('tracks');
 let playlistRef = db.collection('playlistRef'); 
 let metadataRef = db.collection('metadata'); 
 
-const {spClientId, spClientSecret, spBaseUrl, authToken, port, spotify_token, sortParams} = require('./config');
-
 const sort = require('./backend_modules/sort.js')
 const playlist = require('./backend_modules/playlist.js')
 
-//const {port, sortParams, authToken} = require('./config');
-
+const {port, sortParams} = require('./config');
 const sortingParams = sortParams.split(' ')
 
 // Require the framework and instantiate it
@@ -47,7 +44,6 @@ app.get('/', (req, res) => {
 });
 
 app.get('/getPlaylists', async (req, res) => {
-  console.log("trying to get some songs");//, req.query.token); 
   let request = "https://api.spotify.com/v1/me/playlists";
 
 	let headers = 
@@ -61,14 +57,13 @@ app.get('/getPlaylists', async (req, res) => {
    .then(res => res.json())
    .then(data => {
       let response = []; 
-      console.log("DATA: ", data); 
-  let tracks = data.items; 
-  for(let i = 0; i < tracks.length; i++){
-	  let trackData = {}
-	  trackData.id = tracks[i].id;
-	  trackData.name = tracks[i].name; 
-	  trackData.images = tracks[i].images; 
-	  response.push(trackData); 
+	  let tracks = data.items; 
+	  for(let i = 0; i < tracks.length; i++){
+		  let trackData = {}
+		  trackData.id = tracks[i].id;
+		  trackData.name = tracks[i].name; 
+		  trackData.images = tracks[i].images; 
+		  response.push(trackData); 
   }
 
 	for(var i = 0; i < response.length; i++) {
@@ -76,14 +71,10 @@ app.get('/getPlaylists', async (req, res) => {
 		list: response[i], 
 	});
 	}
-	
-	console.log("data is: ", response); 
 	res.send(response);
 
 	nonce ++; 
    
-   	
-   	console.log(nonce, setPlaylist);
    })
    .catch(err => {
       res.send(err);
@@ -130,14 +121,12 @@ app.get('/smartshuffle', async (req, res) => {
 		await fetch(request, {method: 'GET', headers: headers}).then(response => response.json())
 		.then((data) => {
 			let items = data["items"]
-			console.log("things\n\n\n\n", data); 
 			trackIds.push(playlist.getTrackIdsFromPlaylist(items))
 		})
 	}
 
 	trackIds = Array.prototype.concat.apply([], trackIds)
 	let length = trackIds.length
-	console.log(length)
 
 	//add metadata about the songs and playlists added to DB 
 	let increment = admin.firestore.FieldValue.increment(1);
@@ -179,15 +168,11 @@ async function addNameAndArtists(sortedTracks, headers) {
             request = "https://api.spotify.com/v1/tracks/" + trackId
 			await fetch (request, {method: 'GET', headers: headers}).then(response => response.json())
 			.then((data) => {
-				console.log(data); 
-				console.log("album data: ", data["album"])
-				console.log("disk___: ", data["duration_ms"])
 				name = data["name"]
 				artist = data["album"]["artists"][0]["name"]
 				tracksAndNameAndArtists.push([trackId, name, artist])
 
 				//add song-specific metadata to firebase 
-				console.log("HEEEEEEEERE: ", data)
 				let popularity = admin.firestore.FieldValue.increment(data["popularity"] || 0);
 				let duration = admin.firestore.FieldValue.increment(data["duration_ms"] || 0); 
 				let release_year = data["album"]["release_date"] || 0;  
@@ -243,12 +228,6 @@ function getTrackIdsFromPlaylist(data) {
 	}
 	return trackIds;
 }
-
-function getUrl(route) {
-	return spBaseUrl + route;''
-}
-
-// });
 
 //Citing source: https://stackoverflow.com/questions/39776819/function-to-normalize-any-number-from-0-1
 function normalize(val, min, max) {
