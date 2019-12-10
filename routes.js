@@ -55,7 +55,7 @@ app.get('/getPlaylists', async (req, res) => {
 	}
 
    await fetch(request, { 'headers': headers})
-   .then(res => res.json())
+	.then(res => res.json())
    .then(data => {
       let response = []; 
 	  let tracks = data.items; 
@@ -65,7 +65,7 @@ app.get('/getPlaylists', async (req, res) => {
 		  trackData.name = tracks[i].name; 
 		  trackData.images = tracks[i].images; 
 		  response.push(trackData); 
-  }
+  	 }
 
 	for(var i = 0; i < response.length; i++) {
 		let setPlaylist = playlistRef.doc().set({
@@ -237,5 +237,5 @@ function normalize(val, min, max) {
 
 // start server
 app.listen(PORT, () => {
-	console.log(`Server is listening on port ${PORT}`);
+	console.log(`Server is listening on port ` + PORT);
 })
