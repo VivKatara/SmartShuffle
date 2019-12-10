@@ -61,105 +61,40 @@ app.get('/getPlaylists', async (req, res) => {
    .then(data => {
       let response = []; 
       console.log("DATA: ", data); 
-  let tracks = data.items; 
-  for(let i = 0; i < tracks.length; i++){
-  let trackData = {}
-  trackData.id = tracks[i].id;
-  trackData.name = tracks[i].name; 
-  trackData.images = tracks[i].images; 
-  response.push(trackData); 
-  }
+	  let tracks = data.items; 
+	  for(let i = 0; i < tracks.length; i++){
+		  let trackData = {}
+		  trackData.id = tracks[i].id;
+		  trackData.name = tracks[i].name; 
+		  trackData.images = tracks[i].images; 
+		  response.push(trackData); 
+	   }
+	  res.send(response);
+  }).catch(err => {
+	res.send(err);
+})
 
-	console.log("data is: ", data); 
-   let setPlaylist = playlistRef.doc('playlist1').set({
-	  list: response 
-	});
+//   console.log("data is: ", data); 
+//    let setPlaylist = playlistRef.doc('playlist1').set({
+// 	  list: response 
+// 	});
    	
-   	console.log(data);
-	res.send(response);
+//    	console.log(data);
+// 	res.send(response);
 
-   
-   
- res.send(response);
+//    
+//    
+//  res.send(response);
 
-//      console.log(data); 
-   })
-   .catch(err => {
-      res.send(err);
-   });
+// //      console.log(data); 
+//    })
+//    .catch(err => {
+//       res.send(err);
+//    });
  
   
   //do auth stuff and forward request
 })
-
-// app.get('/getPlaylists', function (req, res) {
-// 		console.log("im here!!!");
-//   //console.log("trying to get some songs", req.query.token); 
-//   let request = "https://api.spotify.com/v1/me/playlists";
-//   let headers = 
-//   {
-//     	'Authorization' : 'Bearer ' + spotify_token, //req.query.token,
-//       'Content-Type': 'application/json',
-//       'Content-Length': '0'
-//       // 'Content-Type': 'application/x-www-form-urlencoded',
-// }
-
-//    fetch(request, { 'headers': headers})
-// 	   .then(res => res.json())
-// 	   .then(data => {
-// 	      let response = []; 
-// 	      //console.log("DATA: ", data); 
-// 		  let tracks = data.items; 
-// 		  for(let i = 0; i < tracks.length; i++){
-// 		  	let trackData = {}
-// 		  	trackData.id = tracks[i].id;
-// 		  	trackData.name = tracks[i].name; 
-// 		  	trackData.images = tracks[i].images; 
-// 		  	response.push(trackData); 
-//   		}
-// 	   console.log("data is: ", data); 
-// 	   let setPlaylist = playlistRef.doc('playlist1').set({
-// 		  list: response 
-// 		});
-	   	
-// 	   	console.log(data);
-//  		res.send(response);
-
-// //	      console.log(data); 
-// 	   })
-// 	   .catch(err => {
-// 	      res.send(err);
-//    });
- //  let headers = {
-	// 'Authorization' : 'Bearer ' + req.query.token,
-	// // 'Authorization': authToken,
-	// 'Content-Type': 'application/json',
-	// 'Content-Length': '0'
- //  }
- //  console.log("trying to get some songs", req.query.token); 
- //  let request = "https://api.spotify.com/v1/me/playlists";
-
- //   await fetch(request, { 'headers': headers})
-	//    .then(res => res.json())
-	//    .then(data => {
-	//       let response = []; 
-	// 	  let tracks = data.items; 
-	// 	  for(let i = 0; i < tracks.length; i++){
-	// 	  	let trackData = {}
-	// 	  	trackData.id = tracks[i].id;
-	// 	  	trackData.name = tracks[i].name; 
-	// 	  	trackData.images = tracks[i].images; 
-	// 	  	response.push(trackData); 
- //  		}
- // 		res.send(response);
-	//    })
-	//    .catch(err => {
-	//       res.send(err);
- //   });
- 
-  
-//   //do auth stuff and forward request
-// })
 
 app.get('/smartshuffle', async (req, res) => {
 
