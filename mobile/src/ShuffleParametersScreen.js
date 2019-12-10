@@ -48,7 +48,11 @@ export default class ShuffleParametersScreen extends Component {
       +"tempo=" + this.state.tempo
       + "&danceability=" + this.state.danceability
       + "&instrumentalness=" + this.state.instrumentalness
+<<<<<<< HEAD
+      + "&energy=" + this.state.energy; 
+=======
       + "&energy=" + this.state.energy;
+>>>>>>> 22ed06722a60925b5b5105547022c2e363aa8f16
 
       const response = await fetch(request);
       console.log(response);
