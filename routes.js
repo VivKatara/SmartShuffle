@@ -259,4 +259,3 @@ function normalize(val, min, max) {
 app.listen(port || 3200, () => {
 	console.log(`Server is listening on port ${port}`);
 })
-
