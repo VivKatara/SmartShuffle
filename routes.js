@@ -19,6 +19,7 @@ admin.initializeApp({
 });
 
 let db = admin.firestore();
+var nonce = 0; 
 
 //some firebase collections for songs, playlists, songtime, etc. 
 let trackRef = db.collection('tracks'); 
@@ -51,7 +52,7 @@ app.get('/getPlaylists', async (req, res) => {
 
 	let headers = 
 	  {
-	    	'Authorization' : "Bearer " + req.query.token,
+	      'Authorization' : "Bearer " + req.query.token,
 	      'Content-Type': 'application/json',
 	      'Content-Length': '0'
 	}
@@ -61,46 +62,40 @@ app.get('/getPlaylists', async (req, res) => {
    .then(data => {
       let response = []; 
       console.log("DATA: ", data); 
-	  let tracks = data.items; 
-	  for(let i = 0; i < tracks.length; i++){
-		  let trackData = {}
-		  trackData.id = tracks[i].id;
-		  trackData.name = tracks[i].name; 
-		  trackData.images = tracks[i].images; 
-		  response.push(trackData); 
-	   }
-	  res.send(response);
-  }).catch(err => {
-	res.send(err);
-})
+  let tracks = data.items; 
+  for(let i = 0; i < tracks.length; i++){
+	  let trackData = {}
+	  trackData.id = tracks[i].id;
+	  trackData.name = tracks[i].name; 
+	  trackData.images = tracks[i].images; 
+	  response.push(trackData); 
+  }
 
-//    let setPlaylist = playlistRef.doc('playlist1').set({
-// 	  list: response 
-// 	});
+	for(var i = 0; i < response.length; i++) {
+		let setPlaylist = playlistRef.doc().set({
+		list: response[i], 
+	});
+	}
+	
+	console.log("data is: ", response); 
+	res.send(response);
+
+	nonce ++; 
+   
    	
-//    	console.log(data);
-// 	res.send(response);
-
-//    
-//    
-//  res.send(response);
-
-// //      console.log(data); 
-//    })
-//    .catch(err => {
-//       res.send(err);
-//    });
- 
-  
-  //do auth stuff and forward request
+   	console.log(nonce, setPlaylist);
+   })
+   .catch(err => {
+      res.send(err);
+   });
 })
 
 app.get('/smartshuffle', async (req, res) => {
 
 
 	let headers = {
-		//'Authorization' : 'Bearer ' + req.query.token,
-		'Authorization': authToken,
+		'Authorization' : 'Bearer ' + req.query.token,
+		// 'Authorization': authToken,
 		'Content-Type': 'application/json',
 		'Content-Length': '0'
 	}
@@ -264,9 +259,4 @@ function normalize(val, min, max) {
 app.listen(port || 3200, () => {
 	console.log(`Server is listening on port ${port}`);
 })
-
-
-//SmartShuffle - need to return song id, name of song, and artist in list of lists
-//Merge Playlist enabled for 1-3 playlists in the smartShuffle endpoint
-//Hence, you can delete the merge playlist endpoint and just work with what you have
 
