@@ -66,13 +66,13 @@ export default class ShuffleParametersScreen extends Component {
 
 
   spotifyLogoutButtonWasPressed() {
-      Spotify.logout().finally(() => {
-          this.goToInitialScreen();
-      });
+    Spotify.logout().finally(() => {
+      this.goToInitialScreen();
+    });
   }
 
   goToInitialScreen() {
-      this.props.navigation.navigate('initial');
+    this.props.navigation.navigate('initial');
   }
 
 
@@ -82,35 +82,35 @@ export default class ShuffleParametersScreen extends Component {
         <View style={{flex: 50, alignSelf:"stretch", justifyContent:"center"}}>
           <Text style={styles.maintenanceForm}>Shuffle Parameters: </Text>
         </View>
-        <View style={{paddingLeft: 6, flex: 180, alignSelf:"stretch", justifyContent:"space-around"}}>
-            <Text>Tempo: {this.state.tempo}</Text>
-            <Slider
-                thumbTintColor= "#1DB954"
-                value={Math.round( this.state.tempo * 100 ) / 100}
-                onValueChange={tempo => this.setState({ tempo: Math.round( tempo * 100 ) / 100 })}
-            />
-            <Text>Energy: {this.state.energy}</Text>
-            <Slider
-                thumbTintColor= "#1DB954"
-                value={Math.round( this.state.energy * 100 ) / 100}
-                onValueChange={energy => this.setState({ energy: Math.round( energy * 100 ) / 100 })}
-            />
+        <View style={{ paddingLeft: 6, flex: 180, alignSelf: "stretch", justifyContent: "space-around" }}>
+          <Text>Tempo: {this.state.tempo}</Text>
+          <Slider
+            thumbTintColor="#1DB954"
+            value={Math.round(this.state.tempo * 100) / 100}
+            onValueChange={tempo => this.setState({ tempo: Math.round(tempo * 100) / 100 })}
+          />
+          <Text>Energy: {this.state.energy}</Text>
+          <Slider
+            thumbTintColor="#1DB954"
+            value={Math.round(this.state.energy * 100) / 100}
+            onValueChange={energy => this.setState({ energy: Math.round(energy * 100) / 100 })}
+          />
 
-            <ActivityIndicator style={{paddingBottom:30, flex: 1, justifyContent: 'center'  }} size={76} color="#1DB954" animating={this.state.showSpinner}/>
-            <Text>Danceability: {this.state.danceability}</Text>
-            <Slider
-                thumbTintColor= "#1DB954"
-                value={Math.round( this.state.danceability * 100 ) / 100}
-                onValueChange={danceability => this.setState({ danceability: Math.round( danceability * 100 ) / 100 })}
-            />
-            <Text>Instrumentalness: {this.state.instrumentalness}</Text>
-            <Slider
-                thumbTintColor= "#1DB954"
-                value={Math.round( this.state.instrumentalness * 100 ) / 100}
-                onValueChange={instrumentalness => this.setState({ instrumentalness: Math.round( instrumentalness * 100 ) / 100 })}
-            />
-            <Dropdown label='Genre' onChangeText={(itemValue, itemIndex) => this.categoryValueChange(itemValue)} data={this.state.pickerItems}/>
-            <View style={{paddingLeft: 6, height:30, alignSelf:"stretch", justifyContent:"space-around"}}></View>
+          <ActivityIndicator style={{ paddingBottom: 30, flex: 1, justifyContent: 'center' }} size={76} color="#1DB954" animating={this.state.showSpinner} />
+          <Text>Danceability: {this.state.danceability}</Text>
+          <Slider
+            thumbTintColor="#1DB954"
+            value={Math.round(this.state.danceability * 100) / 100}
+            onValueChange={danceability => this.setState({ danceability: Math.round(danceability * 100) / 100 })}
+          />
+          <Text>Instrumentalness: {this.state.instrumentalness}</Text>
+          <Slider
+            thumbTintColor="#1DB954"
+            value={Math.round(this.state.instrumentalness * 100) / 100}
+            onValueChange={instrumentalness => this.setState({ instrumentalness: Math.round(instrumentalness * 100) / 100 })}
+          />
+          <Dropdown label='Genre' onChangeText={(itemValue, itemIndex) => this.categoryValueChange(itemValue)} data={this.state.pickerItems} />
+          <View style={{ paddingLeft: 6, height: 30, alignSelf: "stretch", justifyContent: "space-around" }}></View>
         </View>
         <View style={{ flex: 70, alignSelf: "stretch", justifyContent: "center", alignItems: "center" }}>
             <View style={{flex: 50, alignSelf:"stretch", justifyContent: 'center', alignItems: 'center'}}>
