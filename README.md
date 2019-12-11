@@ -9,9 +9,9 @@ Smart Shuffle is an application that allows users to sign in with their Spotify,
 Max and Jalen can you put stuff here? thx :) 
 
 #### Starting the App (after installing React Native) 
-* run `yarn` 
-* run `yarn start`
-* If error, try installing pods. 
+* This assumes you have XCode properly installed.
+* run `pod install` from `mobile/ios/` directory 
+* run `react-native run-ios` from `mobile/` directory
 
 ## Backend - shuffle microservice 
 * run `yarn`
