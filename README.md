@@ -14,7 +14,7 @@ Smart Shuffle is an application that allows users to sign in with their Spotify,
 ## Backend - shuffle microservice 
 * run `yarn`
 * run `node routes.js` from `./` root directory 
-* or visit our live endpoint at `https://frightful-barrow-37052.herokuapp.com/`
+* or visit our live endpoint [here](https://frightful-barrow-37052.herokuapp.com/)
 
 ## Data Visualization 
 * run `yarn` 
