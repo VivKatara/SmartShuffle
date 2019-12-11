@@ -6,8 +6,6 @@ Smart Shuffle is an application that allows users to sign in with their Spotify,
 
 ## Frontend - React Native App 
 
-Max and Jalen can you put stuff here? thx :) 
-
 #### Starting the App (after installing React Native) 
 * This assumes you have XCode properly installed.
 * run `pod install` from `mobile/ios/` directory 
@@ -22,7 +20,10 @@ Max and Jalen can you put stuff here? thx :)
 * run `yarn` 
 * run `yarn start`
 
+Our data visualization site is also [live here] (https://smartshuffle.web.app/), hosted on Firebase. 
+
 ### Our data: Firebase/Cloud Firestore 
 
-Our data is stored in Firebase. We have given our TA (Justin Shi) access to our account, so he can view our implementation and the data that is stored there. The database will update each time a user shuffles a new playlist. This change can be seen live from the Firebase console. 
+Our data is stored in Firebase. We have given our TA (Justin Shi) access to our account, so he can view our implementation and the data that is stored there. The database will update each time a user shuffles a new playlist. This change can be seen live from the Firebase console. Our project console can be found [here] (https://console.firebase.google.com/u/0/project/smartshuffle/database/firestore). 
+
 
