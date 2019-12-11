@@ -5,7 +5,9 @@ import {
 	StyleSheet,
 	Text,
 	TouchableHighlight,
-	View
+	View,
+	ScrollView,
+	TouchableOpacity
 } from 'react-native';
 import Spotify from 'rn-spotify-sdk';
 
@@ -19,7 +21,9 @@ export default class PlayerScreen extends PureComponent {
 		super(props);
 
 		this.state = {
-			spotifyUserName: null
+			spotifyUserName: null,
+			currentSongIndex: 0,
+			songIDs: this.props.navigation.getParam("songIDs", ["song1","song2","song3"]),
 		};
 
 		this.spotifyLogoutButtonWasPressed = this.spotifyLogoutButtonWasPressed.bind(this);
@@ -31,13 +35,19 @@ export default class PlayerScreen extends PureComponent {
 			// update state with user info
 			this.setState({ spotifyUserName: result.display_name });
 			// play song
-			return Spotify.playURI("spotify:track:2zk7TQx9Xa4yxYmsjgDCPp", 0, 0);
-		}).then(() => {
-			// success
-		}).catch((error) => {
-			// error
-			Alert.alert("Error", error.message);
+			Spotify.addListener('audioDeliveryDone', () => {
+				this.playSong(this.state.currentSongIndex + 1);
+				console.log("fired");
+			});
+
 		});
+	}
+
+	playSong(index) {
+		console.log(index);
+		this.setState({ currentSongIndex: index });
+		Spotify.playURI("spotify:track:" + this.state.songIDs[this.state.currentSongIndex][0], 0, 0)
+			.then(() => { console.log('PLAYING') }).catch((error) => { Alert.alert('error', error); });
 	}
 
 	goToInitialScreen() {
@@ -51,20 +61,31 @@ export default class PlayerScreen extends PureComponent {
 	}
 
 	render() {
+		const songNames = this.state.songIDs
+		const songs = []
+		for (const [index, value] of songNames.entries()) {
+			songs.push(
+				<TouchableOpacity key={index} style={styles.rectangle} onPress={() => { this.playSong(index) }}>
+					<View style={{flex:1, marginLeft:"5%", alignSelf:'stretch', justifyContent: 'center', alignItems: 'center'}}>
+						<Text style={styles.title}>{value[1]}</Text>
+						<Text style={styles.artist}>{value[2]}</Text>
+					</View>
+				</TouchableOpacity>
+			)
+		}
+
 		return (
 			<View style={styles.container}>
-				{this.state.spotifyUserName != null ? (
-					<Text style={styles.greeting}>
-						Playing song "Dancing in the moonlight"!
-					</Text>
-				) : (
-						<Text style={styles.greeting}>
-							Getting user info...
-					</Text>
-					)}
-				<TouchableHighlight onPress={this.spotifyLogoutButtonWasPressed}>
-					<Text>Logout</Text>
-				</TouchableHighlight>
+				<View style={{ height: 40, justifyContent: 'center', alignItems: 'center' }}>
+				</View>
+				<ScrollView style={{ flex: 9, alignSelf: 'stretch' }} contentInsetAdjustmentBehavior="automatic">
+					{songs}
+				</ScrollView>
+				<View style={{ height: 70, justifyContent: 'center', alignItems: 'center' }}>
+					<TouchableHighlight onPress={this.spotifyLogoutButtonWasPressed}>
+						<Text>Logout</Text>
+					</TouchableHighlight>
+				</View>
 			</View>
 		);
 	}
@@ -76,6 +97,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
+		alignSelf: 'stretch',
 		backgroundColor: '#F5FCFF',
 	},
 	greeting: {
@@ -83,4 +105,29 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		margin: 10,
 	},
+	rectangle: {
+      elevation: 5,
+      marginLeft: "5.56%",
+      marginTop: "1.39%",
+      marginBottom: "1.39%",
+      width: "88.89%",
+      height: 80,
+      borderRadius: 8,
+      backgroundColor: "#fff",
+      shadowColor: "#a2aabc",
+      shadowOffset: {
+        width: 0,
+        height: -1
+      },
+      shadowRadius: 6,
+      shadowOpacity: 1,
+   },
+   title: {
+	   fontSize:13,
+	   color:"#1DB954",
+   },
+   artist: {
+	   fontSize:10,
+	   color:"#1DB954",
+   }
 });
