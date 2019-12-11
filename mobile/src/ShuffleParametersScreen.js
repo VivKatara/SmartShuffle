@@ -56,6 +56,7 @@ export default class ShuffleParametersScreen extends Component {
 
 
       this.setState({ showSpinner: true});
+
       const response = await fetch(request);
       const songs = await response.json();
 
