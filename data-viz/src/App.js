@@ -8,7 +8,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>
-          AYOOOO welcome to our data visualization site! 
+          Welcome to SmartShuffle Data! 
         </p>
         <a
           className="App-link"
@@ -16,12 +16,8 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          See more 
         </a>
         <Data />
-        <p>
-          blah blah
-        </p>
       </header>
     </div>
   );
