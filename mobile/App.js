@@ -16,7 +16,7 @@ import {
 // import InitialScreen from './src/InitialScreen.js';
 // import PlayerScreen from './src/PlayerScreen.js';
 //
-// 
+//
 // const MainApp = createSwitchNavigator({
 // 	initial: {
 // 		screen: InitialScreen,
