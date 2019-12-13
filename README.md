@@ -6,12 +6,20 @@ Smart Shuffle is an application that allows users to sign in with their Spotify,
 
 ## Frontend - React Native App 
 
-#### Starting the App (after installing React Native) 
+#### Starting the App on iOS Simulator(after installing React Native) 
 * This assumes you have XCode properly installed.
 * Navigate to /mobile/node_modules/rn-spotify-sdk/react-native.config.js and
 change the packageImportPath to 'import com.lufinkey.react.spotify.RNSpotifyPackage;'
 * run `pod install` from `mobile/ios/` directory 
 * run `react-native run-ios` from `mobile/` directory
+
+#### Starting the App on iOS Simulator(after installing React Native) 
+* This assumes you have an Android Studio Simulator properly installed.
+* Instructions on how to setup Android Development Environment can be found at https://facebook.github.io/react-native/docs/getting-started
+* Navigate to /mobile/node_modules/rn-spotify-sdk/react-native.config.js and
+change the packageImportPath to 'import com.lufinkey.react.spotify.RNSpotifyPackage;'
+* Open your Android AVD Emulator
+* run `react-native run-android` from `mobile/` directory
 
 ## Backend - shuffle microservice 
 * run `yarn`
