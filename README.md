@@ -6,6 +6,10 @@ Smart Shuffle is an application that allows users to sign in with their Spotify,
 
 ## Frontend - React Native App 
 
+#### YouTube Demo
+
+https://youtu.be/_Tnp0ULOQ20
+
 #### Starting the App on iOS Simulator(after installing React Native) 
 * NOTE: The react-native-material-dropdown component does not work well with iOS for unknown reasons. To choose a playlist on iOS, you must click at a specific height slightly above the dragdown.
 * This assumes you have XCode properly installed.
