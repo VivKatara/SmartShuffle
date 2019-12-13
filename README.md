@@ -13,7 +13,7 @@ change the packageImportPath to 'import com.lufinkey.react.spotify.RNSpotifyPack
 * run `pod install` from `mobile/ios/` directory 
 * run `react-native run-ios` from `mobile/` directory
 
-#### Starting the App on iOS Simulator(after installing React Native) 
+#### Starting the App on Android Simulator(after installing React Native) 
 * This assumes you have an Android Studio Simulator properly installed.
 * Instructions on how to setup Android Development Environment can be found at https://facebook.github.io/react-native/docs/getting-started
 * Navigate to /mobile/node_modules/rn-spotify-sdk/react-native.config.js and
